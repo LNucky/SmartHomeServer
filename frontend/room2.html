@@ -101,14 +101,6 @@
                 </div>
             </div>
             </div>
-            <div class="auto-badge" id="light-auto-badge2">🔒 Авто-режим активен</div>
-            <div class="row gi" style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-radius:var(--r3);margin-top:8px;">
-                <div>
-                    <div class="row-lbl" style="font-size:13px;font-weight:700;color:var(--t2);">Авто — датчик движения</div>
-                    <div class="row-val" id="light-auto-lbl2" style="font-size:11px;font-weight:600;color:var(--t3);">Выключен</div>
-                </div>
-                <button class="tog tog-sm" id="light-auto-tog2" onclick="togLightAuto()"></button>
-            </div>
         </div>
 
         <!-- ВЕНТИЛЯЦИЯ -->
@@ -121,14 +113,6 @@
                 </div>
                 <button class="tog on" id="vent-tog2" onclick="togVent()"></button>
             </div>
-            </div>
-            <div class="auto-badge" id="vent-auto-badge2">🔒 Авто-режим активен</div>
-            <div class="row gi" style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-radius:var(--r3);">
-                <div>
-                    <div class="row-lbl" style="font-size:13px;font-weight:700;color:var(--t2);">Авто — датчик темп./влажн.</div>
-                    <div class="row-val" id="vent-auto-lbl2" style="font-size:11px;font-weight:600;color:var(--t3);">Выключен</div>
-                </div>
-                <button class="tog tog-sm" id="vent-auto-tog2" onclick="togVentAuto()"></button>
             </div>
         </div>
 
@@ -172,14 +156,6 @@
                     <button onclick="setBlind('close')" style="padding:9px;border-radius:var(--r3);border:1px solid rgba(255,180,90,.12);background:rgba(0,0,0,.3);color:var(--t2);font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:800;cursor:pointer;">🌙 Закрыть</button>
                 </div>
             </div>
-            </div>
-            <div class="auto-badge" id="blind-auto-badge">🔒 Авто-режим активен</div>
-            <div class="row gi" style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-radius:var(--r3);">
-                <div>
-                    <div class="row-lbl" style="font-size:13px;font-weight:700;color:var(--t2);">Авто — по расписанию</div>
-                    <div class="row-val" id="blind-auto-lbl" style="font-size:11px;font-weight:600;color:var(--t3);">09:00 открыть · 21:00 закрыть</div>
-                </div>
-                <button class="tog tog-sm on" id="blind-auto-tog" onclick="togBlindAuto()"></button>
             </div>
         </div>
 
@@ -228,7 +204,8 @@
     });
 
     // Освещение
-    let lightOn2 = false, lightAuto2 = false, lightMode2 = 'night';
+    let lightOn2 = false;
+    let lightMode2 = 'night';
     const LMODES2 = {
         day: { dc: 'mode-btn day-on', nc: 'mode-btn' },
         night: { dc: 'mode-btn', nc: 'mode-btn night-on' },
@@ -238,47 +215,56 @@
         document.getElementById('mode-day2').className = LMODES2[mode].dc;
         document.getElementById('mode-night2').className = LMODES2[mode].nc;
         if (!silent) notify(mode === 'day' ? '☀️ Дневной свет' : '🌙 Ночной свет');
+        if (silent) return;
+        const tog = document.getElementById('light-tog2');
+        if (!tog || !tog.classList.contains('on')) return;
+        if (window.isDeviceControlLocked('light-card-lock2')) return;
+        (async () => {
+            try {
+                await window.applyRoomLightsFromMode(2, mode);
+                await window.commitDeviceMutation();
+            } catch (e) {
+                console.error(e);
+                notify('Не удалось сохранить режим света');
+                await window.refreshDevicesFromServer();
+            }
+        })();
     }
-    function togLight() {
-        if (lightAuto2) return;
+    async function togLight() {
+        if (window.isDeviceControlLocked('light-card-lock2')) return;
         const tog = document.getElementById('light-tog2');
         if (!tog) return;
-        tog.classList.toggle('on');
-        lightOn2 = tog.classList.contains('on');
-        const state = document.getElementById('light-state2');
-        if (state) state.textContent = lightOn2 ? 'Включено' : 'Выключено';
-        notify(lightOn2 ? '💡 Свет включён' : '💡 Свет выключен');
-    }
-    function togLightAuto() {
-        lightAuto2 = !lightAuto2;
-        const autoTog = document.getElementById('light-auto-tog2');
-        if (autoTog) autoTog.classList.toggle('on', lightAuto2);
-        const lbl = document.getElementById('light-auto-lbl2');
-        if (lbl) lbl.textContent = lightAuto2 ? 'Включён — авто по движению' : 'Выключен';
-        const badge = document.getElementById('light-auto-badge2');
-        if (badge) badge.classList.toggle('show', lightAuto2);
-        notify(lightAuto2 ? '💡 Авто: режим заблокирован' : '💡 Авто выключен');
+        const willOn = !tog.classList.contains('on');
+        try {
+            if (willOn) {
+                await window.applyRoomLightsFromMode(2, lightMode2);
+            } else {
+                await window.setRoomDayNightLights(2, false, false);
+            }
+            await window.commitDeviceMutation();
+            notify(willOn ? '💡 Свет включён' : '💡 Свет выключен');
+        } catch (e) {
+            console.error(e);
+            notify('Не удалось сохранить освещение');
+            await window.refreshDevicesFromServer();
+        }
     }
 
     // Вентиляция
-    let ventAuto2 = false;
-    function togVent() {
-        if (ventAuto2) return;
+    async function togVent() {
+        if (window.isDeviceControlLocked('vent-card-lock2')) return;
         const b = document.getElementById('vent-tog2');
-        b.classList.toggle('on');
-        const on = b.classList.contains('on');
-        document.getElementById('vent-state2').textContent = on ? 'Включена' : 'Выключена';
-        notify(on ? '🌀 Вентиляция включена' : '🌀 Вентиляция выключена');
-    }
-    function togVentAuto() {
-        ventAuto2 = !ventAuto2;
-        const autoTog = document.getElementById('vent-auto-tog2');
-        if (autoTog) autoTog.classList.toggle('on', ventAuto2);
-        const lbl = document.getElementById('vent-auto-lbl2');
-        if (lbl) lbl.textContent = ventAuto2 ? 'Включён — авто по темп./влажн.' : 'Выключен';
-        const badge = document.getElementById('vent-auto-badge2');
-        if (badge) badge.classList.toggle('show', ventAuto2);
-        notify(ventAuto2 ? '🌀 Авто: управление заблокировано' : '🌀 Авто выключен');
+        if (!b) return;
+        const willOn = !b.classList.contains('on');
+        try {
+            await window.setDevice('vent', 2, willOn);
+            await window.commitDeviceMutation();
+            notify(willOn ? '🌀 Вентиляция включена' : '🌀 Вентиляция выключена');
+        } catch (e) {
+            console.error(e);
+            notify('Не удалось сохранить вентиляцию');
+            await window.refreshDevicesFromServer();
+        }
     }
 
     // Безопасность
@@ -295,56 +281,59 @@
     }
 
     // Жалюзи
-    let blindOpen = true, blindAuto = true;
-    function togBlind() {
-        if (blindAuto) return;
-        blindOpen = !blindOpen;
-        updateBlindUI();
-        notify(blindOpen ? '🪟 Жалюзи открыты' : '🪟 Жалюзи закрыты');
+    let blindOpen = true;
+    async function togBlind() {
+        if (window.isDeviceControlLocked('blind-card-lock')) return;
+        const newOpen = !blindOpen;
+        try {
+            await window.setDevice('servo', 2, newOpen);
+            await window.commitDeviceMutation();
+            notify(newOpen ? '🪟 Жалюзи открыты' : '🪟 Жалюзи закрыты');
+        } catch (e) {
+            console.error(e);
+            notify('Не удалось сохранить жалюзи');
+            await window.refreshDevicesFromServer();
+        }
     }
-    function setBlind(state) {
-        if (blindAuto) return;
-        blindOpen = (state === 'open');
-        updateBlindUI();
-        notify(blindOpen ? '☀ Открыты' : '🌙 Закрыты');
-    }
-    function updateBlindUI() {
-        document.getElementById('blind-cover').style.opacity = blindOpen ? '0' : '0.85';
-        document.getElementById('blind-state').textContent = blindOpen ? 'Открыты' : 'Закрыты';
-        document.getElementById('blind-tog').classList.toggle('on', blindOpen);
-    }
-    function togBlindAuto() {
-        blindAuto = !blindAuto;
-        const autoTog = document.getElementById('blind-auto-tog');
-        if (autoTog) autoTog.classList.toggle('on', blindAuto);
-        const lbl = document.getElementById('blind-auto-lbl');
-        if (lbl) lbl.textContent = blindAuto ? '09:00 открыть · 21:00 закрыть' : 'Авто выключено';
-        const badge = document.getElementById('blind-auto-badge');
-        if (badge) badge.classList.toggle('show', blindAuto);
-        notify(blindAuto ? '🪟 Авто жалюзи включено' : '🪟 Авто выключено');
+    async function setBlind(state) {
+        if (window.isDeviceControlLocked('blind-card-lock')) return;
+        const open = state === 'open';
+        try {
+            await window.setDevice('servo', 2, open);
+            await window.commitDeviceMutation();
+            notify(open ? '☀ Открыты' : '🌙 Закрыты');
+        } catch (e) {
+            console.error(e);
+            notify('Не удалось сохранить жалюзи');
+            await window.refreshDevicesFromServer();
+        }
     }
 
-    function togSock(id) {
-        const sk = document.getElementById('socket-card-lock-r2');
-        if (sk && sk.classList.contains('locked')) return;
+    async function togSock(id) {
+        if (window.isDeviceControlLocked('socket-card-lock-r2')) return;
         const tgid = id === 'tv' ? 'sock-tog-tv' : 'sock-tog-ac';
         const btn = document.getElementById(tgid);
         if (!btn) return;
-        btn.classList.toggle('on');
-        const on = btn.classList.contains('on');
-        notify(id === 'tv' ? (on ? 'Телевизор включён' : 'Телевизор выключен') : (on ? 'Кондиционер включён' : 'Кондиционер выключен'));
+        const willOn = !btn.classList.contains('on');
+        const dtype = id === 'tv' ? 'socket_tv' : 'socket_ac';
+        try {
+            await window.setDevice(dtype, 2, willOn);
+            await window.commitDeviceMutation();
+            notify(id === 'tv' ? (willOn ? 'Телевизор включён' : 'Телевизор выключен') : (willOn ? 'Кондиционер включён' : 'Кондиционер выключен'));
+        } catch (e) {
+            console.error(e);
+            notify('Не удалось сохранить розетку');
+            await window.refreshDevicesFromServer();
+        }
     }
 
     // Экспорт
     window.setLightMode = setLightMode;
     window.togLight = togLight;
-    window.togLightAuto = togLightAuto;
     window.togVent = togVent;
-    window.togVentAuto = togVentAuto;
     window.testAlarm = testAlarm;
     window.togBlind = togBlind;
     window.setBlind = setBlind;
-    window.togBlindAuto = togBlindAuto;
     window.togSock = togSock;
     window.syncRoom2Light = (on) => {
         lightOn2 = !!on;

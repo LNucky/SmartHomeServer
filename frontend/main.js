@@ -119,30 +119,26 @@ function initProfileDropdown() {
 
 // ─────────────────────────────────────────────────────────────────────────
 // Вентиляция (главная страница)
-let ventAutoMain = false;
-function togVentMain() {
+async function togVentMain() {
+    if (typeof window.isDeviceControlLocked === 'function' && window.isDeviceControlLocked('vent-main-lock')) return;
     const b = document.getElementById('vent-tog');
     if (!b) return;
-    b.classList.toggle('on');
-    const on = b.classList.contains('on');
-    const stateLbl = document.getElementById('vent-state-lbl');
-    if (stateLbl) stateLbl.textContent = on ? 'Включена' : 'Выключена';
-    notify(on ? '🌀 Вентиляция включена' : '🌀 Вентиляция выключена');
-}
-function togVentAutoMain() {
-    ventAutoMain = !ventAutoMain;
-    const autoTog = document.getElementById('vent-auto-tog');
-    if (autoTog) autoTog.classList.toggle('on', ventAutoMain);
-    const autoLbl = document.getElementById('vent-auto-lbl');
-    if (autoLbl) autoLbl.textContent = ventAutoMain ? 'Включён — авто по темп./влажн.' : 'Выключен';
-    const badge = document.getElementById('vent-auto-badge');
-    if (badge) badge.classList.toggle('show', ventAutoMain);
-    notify(ventAutoMain ? '🌀 Авто: управление заблокировано' : '🌀 Авто выключен');
+    const willOn = !b.classList.contains('on');
+    try {
+        await window.setDevice('vent', 1, willOn);
+        await window.commitDeviceMutation();
+        const stateLbl = document.getElementById('vent-state-lbl');
+        if (stateLbl) stateLbl.textContent = willOn ? 'Включена' : 'Выключена';
+        notify(willOn ? '🌀 Вентиляция включена' : '🌀 Вентиляция выключена');
+    } catch (e) {
+        console.error(e);
+        notify('Не удалось сохранить вентиляцию');
+        await window.refreshDevicesFromServer();
+    }
 }
 
 // Экспорт в глобальную область для использования в HTML-обработчиках
 window.togVentMain = togVentMain;
-window.togVentAutoMain = togVentAutoMain;
 
 // ─────────────────────────────────────────────────────────────────────────
 // Инициализация страницы

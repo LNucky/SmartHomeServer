@@ -84,21 +84,41 @@ function updateUIByScenario() {
     if (noScenarioMsg) noScenarioMsg.style.display = isSleep ? 'block' : 'none';
 }
 
-function hidePerDeviceAutoRows() {
-    ['light-auto-tog', 'vent-auto-tog', 'light-auto-tog2', 'vent-auto-tog2', 'blind-auto-tog'].forEach((id) => {
-        const t = document.getElementById(id);
-        const row = t && t.closest('.row.gi');
-        if (row) row.style.display = 'none';
-    });
-    ['light-auto-badge', 'vent-auto-badge', 'light-auto-badge2', 'vent-auto-badge2', 'blind-auto-badge'].forEach((id) => {
-        const b = document.getElementById(id);
-        if (b) b.style.display = 'none';
-    });
-}
-
 function devOn(list, type, room) {
     const x = list.find((d) => d.device_type === type && d.room_id === room);
     return x ? x.is_on : false;
+}
+
+function isDeviceControlLocked(lockElId) {
+    const el = document.getElementById(lockElId);
+    return !!(el && el.classList.contains('locked'));
+}
+
+async function setDevice(deviceType, roomId, turnOn) {
+    const r = await apiFetch(
+        `/api/devices/${encodeURIComponent(deviceType)}?room_id=${roomId}`,
+        { method: 'POST', body: JSON.stringify({ turn_on: turnOn }) },
+    );
+    if (!r.ok) {
+        const t = await r.text();
+        throw new Error(t || String(r.status));
+    }
+    return r.json();
+}
+
+async function setRoomDayNightLights(roomId, dayOn, nightOn) {
+    await setDevice('day_light', roomId, dayOn);
+    await setDevice('night_light', roomId, nightOn);
+}
+
+/** Включить только дневной или только ночной свет в комнате. */
+async function applyRoomLightsFromMode(roomId, mode) {
+    await setRoomDayNightLights(roomId, mode === 'day', mode === 'night');
+}
+
+async function commitDeviceMutation() {
+    resetManualDeviceHydration();
+    await refreshDevicesFromServer();
 }
 
 function setToggle(id, on) {
@@ -130,6 +150,12 @@ async function refreshDevicesFromServer() {
     if (!autoMode && manualDeviceHydrated) return;
 
     const path = location.pathname || '';
+    if (document.getElementById('avg-temp') && document.getElementById('vent-tog')) {
+        const vMain = devOn(devices, 'vent', 1);
+        setToggle('vent-tog', vMain);
+        const vsl = document.getElementById('vent-state-lbl');
+        if (vsl) vsl.textContent = vMain ? 'Включена' : 'Выключена';
+    }
     if (path.includes('room1')) {
         const v1 = devOn(devices, 'vent', 1);
         const d1 = devOn(devices, 'day_light', 1);
@@ -252,7 +278,6 @@ async function refreshSensorsFromServer() {
 }
 
 async function initScenarios() {
-    hidePerDeviceAutoRows();
     try {
         await loadScenarioFromServer();
         await refreshDevicesFromServer();
@@ -271,3 +296,8 @@ window.initScenarios = initScenarios;
 window.updateUIByScenario = updateUIByScenario;
 window.refreshDevicesFromServer = refreshDevicesFromServer;
 window.refreshSensorsFromServer = refreshSensorsFromServer;
+window.setDevice = setDevice;
+window.setRoomDayNightLights = setRoomDayNightLights;
+window.applyRoomLightsFromMode = applyRoomLightsFromMode;
+window.commitDeviceMutation = commitDeviceMutation;
+window.isDeviceControlLocked = isDeviceControlLocked;
