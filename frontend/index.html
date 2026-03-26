@@ -6,7 +6,6 @@
     <title>Главная — Умный Дом</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 <div class="bg"></div>
@@ -97,28 +96,14 @@
 
     <!-- VENTILATION STATE -->
     <div class="gd" style="padding:24px;border-radius:var(--r);margin-bottom:24px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+        <div class="lockable" id="vent-main-lock">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
             <div style="display:flex;align-items:center;gap:10px;">
                 <div style="width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;background:rgba(0,0,0,.3);border:1px solid rgba(255,185,100,.15);">🌀</div>
                 <div><div style="font-size:17px;font-weight:800;color:var(--t1);margin-bottom:2px;">Вентиляция</div><div style="font-size:11px;color:var(--t3);" id="vent-state-lbl">Включена</div></div>
             </div>
             <button class="tog on" id="vent-tog" onclick="togVentMain()"></button>
         </div>
-        <div class="lockable" id="vent-controls">
-            <div class="row gi" style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-radius:var(--r3);margin-bottom:8px;">
-                <span style="font-size:13px;font-weight:700;color:var(--t2);">Режим</span>
-                <select id="vent-sel" style="background:transparent;border:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;color:var(--t1);outline:none;cursor:pointer;" onchange="notify('Режим: '+this.value)">
-                    <option>Обогрев</option><option selected>Охлаждение</option><option>Проветривание</option>
-                </select>
-            </div>
-            <div class="row gi" style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-radius:var(--r3);margin-bottom:8px;">
-                <span style="font-size:13px;font-weight:700;color:var(--t2);">Целевая температура</span>
-                <div style="display:flex;align-items:center;gap:8px;">
-                    <button style="width:26px;height:26px;border-radius:50%;border:1px solid rgba(255,190,100,.18);background:rgba(255,255,255,.08);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--t1);" onclick="adjTempMain(-1)">−</button>
-                    <span style="font-size:18px;font-weight:800;min-width:22px;text-align:center;" id="vent-temp">22</span>°
-                    <button style="width:26px;height:26px;border-radius:50%;border:1px solid rgba(255,190,100,.18);background:rgba(255,255,255,.08);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--t1);" onclick="adjTempMain(1)">+</button>
-                </div>
-            </div>
         </div>
         <div class="auto-badge" id="vent-auto-badge">🔒 Авто-режим активен</div>
         <div class="row gi" style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-radius:var(--r3);">
@@ -128,19 +113,6 @@
             </div>
             <button class="tog tog-sm" id="vent-auto-tog" onclick="togVentAutoMain()"></button>
         </div>
-    </div>
-
-    <!-- CHART -->
-    <div class="chart-card gd" style="padding:26px;border-radius:var(--r);margin-bottom:24px;">
-        <div class="chart-head" style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px;">
-            <div><div class="chart-title" style="font-size:19px;font-weight:800;">Статистика за сутки</div><div class="chart-sub" style="font-size:13px;color:var(--t3);margin-top:3px;">Температура и влажность</div></div>
-            <div class="pper" style="display:flex;gap:6px;">
-                <button class="pp active" onclick="switchPeriod(this,'day')" style="padding:7px 15px;border-radius:100px;font-size:13px;font-weight:700;cursor:pointer;border:1px solid transparent;font-family:'Plus Jakarta Sans',sans-serif;color:var(--t3);transition:.2s;background:transparent;">День</button>
-                <button class="pp" onclick="switchPeriod(this,'week')" style="padding:7px 15px;border-radius:100px;font-size:13px;font-weight:700;cursor:pointer;border:1px solid transparent;font-family:'Plus Jakarta Sans',sans-serif;color:var(--t3);transition:.2s;background:transparent;">Неделя</button>
-                <button class="pp" onclick="switchPeriod(this,'month')" style="padding:7px 15px;border-radius:100px;font-size:13px;font-weight:700;cursor:pointer;border:1px solid transparent;font-family:'Plus Jakarta Sans',sans-serif;color:var(--t3);transition:.2s;background:transparent;">Месяц</button>
-            </div>
-        </div>
-        <div class="cw" style="height:220px;"><canvas id="main-chart"></canvas></div>
     </div>
 
     <!-- ROOMS GRID -->
@@ -200,40 +172,8 @@
 <script src="main.js"></script>
 <script src="scenarios.js"></script>
 <script>
-    // Инициализация сценариев и графика
     document.addEventListener('DOMContentLoaded', () => {
         initScenarios();
-
-        // График
-        const ctx = document.getElementById('main-chart').getContext('2d');
-        const chartData = {
-            day: { labels: ['00','02','04','06','08','10','12','14','16','18','20','22'], temp: [21.5,21.8,22,22.3,22.5,23,23.5,24,23.8,23.5,23.2,23.5], hum: [55,54,56,57,58,59,60,58,57,58,57,58] },
-            week: { labels: ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'], temp: [22.1,22.5,23,23.4,22.8,23.2,23.5], hum: [56,57,58,59,57,56,58] },
-            month: { labels: ['1','5','10','15','20','25','30'], temp: [21,22,23.5,24,22.5,21.8,23], hum: [54,56,59,60,57,55,58] }
-        };
-        let mainChart;
-        const ga = ctx.createLinearGradient(0,0,0,200); ga.addColorStop(0,'rgba(255,154,60,.3)'); ga.addColorStop(1,'rgba(255,154,60,0)');
-        const gb = ctx.createLinearGradient(0,0,0,200); gb.addColorStop(0,'rgba(111,207,151,.24)'); gb.addColorStop(1,'rgba(111,207,151,0)');
-        mainChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: chartData.day.labels,
-                datasets: [
-                    { label: 'Температура °C', data: chartData.day.temp, borderColor: '#ff9a3c', backgroundColor: ga, fill: true, tension: 0.5, pointRadius: 4, pointBackgroundColor: '#ff9a3c', pointBorderColor: 'rgba(255,240,220,.6)', pointBorderWidth: 2, borderWidth: 2.5 },
-                    { label: 'Влажность %', data: chartData.day.hum, borderColor: '#6fcf97', backgroundColor: gb, fill: true, tension: 0.5, pointRadius: 4, pointBackgroundColor: '#6fcf97', pointBorderColor: 'rgba(255,240,220,.6)', pointBorderWidth: 2, borderWidth: 2.5, yAxisID: 'y1' }
-                ]
-            },
-            options: { responsive: true, maintainAspectRatio: false, interaction: { intersect: false, mode: 'index' }, plugins: { legend: { labels: { color: 'rgba(255,220,180,.7)', usePointStyle: true, pointStyleWidth: 12, font: { size: 13, weight: '700' } } } }, scales: { x: { grid: { color: 'rgba(255,255,255,.05)' }, ticks: { color: 'rgba(255,210,160,.55)', font: { size: 12, weight: '600' } } }, y: { grid: { color: 'rgba(255,255,255,.05)' }, ticks: { color: 'rgba(255,210,160,.55)', font: { size: 12, weight: '600' } } }, y1: { position: 'right', grid: { display: false }, ticks: { color: 'rgba(255,210,160,.55)', font: { size: 12, weight: '600' } }, min: 40, max: 80 } } }
-        });
-        window.switchPeriod = function(btn, period) {
-            document.querySelectorAll('.pp').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            const d = chartData[period];
-            mainChart.data.labels = d.labels;
-            mainChart.data.datasets[0].data = d.temp;
-            mainChart.data.datasets[1].data = d.hum;
-            mainChart.update('active');
-        };
     });
 </script>
 </body>

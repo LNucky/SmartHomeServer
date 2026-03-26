@@ -95,12 +95,9 @@
                 <button class="tog" id="light-tog2" onclick="togLight()"></button>
             </div>
             <div id="light-controls2">
-                <div class="mode-btns" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+                <div class="mode-btns" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
                     <button class="mode-btn" id="mode-day2" onclick="setLightMode('day')" style="width:100%;padding:13px 8px;border-radius:var(--r3);border:1px solid rgba(255,185,100,.15);background:rgba(0,0,0,.2);color:var(--t3);font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;">☀️ Дневной</button>
                     <button class="mode-btn night-on" id="mode-night2" onclick="setLightMode('night')" style="width:100%;padding:13px 8px;border-radius:var(--r3);border:1px solid rgba(255,185,100,.15);background:rgba(0,0,0,.2);color:var(--t3);font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;">🌙 Ночной</button>
-                </div>
-                <div class="row gi" style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-radius:var(--r3);">
-                    <span style="font-size:12px;color:var(--t2);font-weight:600;" id="light-mode-desc2">Яркость 10% · 2200K · Тёплый</span>
                 </div>
             </div>
             </div>
@@ -123,22 +120,6 @@
                     <div><div class="ctrl-title" style="font-size:17px;font-weight:800;color:var(--t1);margin-bottom:2px;">Вентиляция</div><div class="ctrl-sub" id="vent-state2" style="font-size:11px;color:var(--t3);">Включена</div></div>
                 </div>
                 <button class="tog on" id="vent-tog2" onclick="togVent()"></button>
-            </div>
-            <div id="vent-controls2">
-                <div class="row gi" style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-radius:var(--r3);margin-bottom:8px;">
-                    <span class="row-lbl" style="font-size:13px;font-weight:700;color:var(--t2);">Режим</span>
-                    <select id="vent-mode-sel2" style="background:transparent;border:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;color:var(--t1);outline:none;cursor:pointer;" onchange="notify('Режим: '+this.value)">
-                        <option>Обогрев</option><option selected>Охлаждение</option><option>Проветривание</option>
-                    </select>
-                </div>
-                <div class="row gi" style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-radius:var(--r3);margin-bottom:8px;">
-                    <span class="row-lbl" style="font-size:13px;font-weight:700;color:var(--t2);">Целевая температура</span>
-                    <div style="display:flex;align-items:center;gap:8px;">
-                        <button style="width:26px;height:26px;border-radius:50%;border:1px solid rgba(255,190,100,.18);background:rgba(255,255,255,.08);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--t1);" onclick="adjTemp(-1)">−</button>
-                        <span style="font-size:18px;font-weight:800;min-width:22px;text-align:center;" id="vent-temp2">20</span>°
-                        <button style="width:26px;height:26px;border-radius:50%;border:1px solid rgba(255,190,100,.18);background:rgba(255,255,255,.08);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--t1);" onclick="adjTemp(1)">+</button>
-                    </div>
-                </div>
             </div>
             </div>
             <div class="auto-badge" id="vent-auto-badge2">🔒 Авто-режим активен</div>
@@ -186,12 +167,10 @@
                 <div class="blind-overlay" id="blind-cover" style="position:absolute;inset:0;background:rgba(30,12,2,.7);transition:opacity .5s;opacity:0;"></div>
             </div>
             <div id="blind-controls">
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
                     <button onclick="setBlind('open')" style="padding:9px;border-radius:var(--r3);border:1px solid rgba(255,175,60,.3);background:rgba(255,175,60,.2);color:#ffb347;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:800;cursor:pointer;">☀ Открыть</button>
                     <button onclick="setBlind('close')" style="padding:9px;border-radius:var(--r3);border:1px solid rgba(255,180,90,.12);background:rgba(0,0,0,.3);color:var(--t2);font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:800;cursor:pointer;">🌙 Закрыть</button>
                 </div>
-                <div class="slr-row" style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:var(--t2);margin-bottom:7px;"><span>Открытие</span><span class="slr-val" id="blind-pct" style="color:var(--t1);font-weight:800;">100%</span></div>
-                <input type="range" min="0" max="100" value="100" id="blind-sl" oninput="setBlindPct(this.value)" style="width:100%;-webkit-appearance:none;height:6px;border-radius:100px;outline:none;cursor:pointer;background:rgba(255,255,255,.12);margin-bottom:12px;">
             </div>
             </div>
             <div class="auto-badge" id="blind-auto-badge">🔒 Авто-режим активен</div>
@@ -214,22 +193,22 @@
                 </div>
                 <span style="font-size:22px;">⚡</span>
             </div>
- <div class="sock-grid">
-    <div class="sock on" id="sock-tv" onclick="togSock('tv')" style="padding:16px;border-radius:var(--r2);cursor:pointer;transition:.22s;border:1px solid rgba(255,190,100,.12);background:rgba(0,0,0,.25);">
-        <div class="sock-top" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><span class="sock-icon" style="font-size:20px;">📺</span><span class="sst on" id="sst-tv" style="font-size:11px;font-weight:800;letter-spacing:.06em;color:#ffaa44;">ON</span></div>
-        <div class="sock-name" style="font-size:14px;font-weight:800;">Телевизор</div>
-        <div class="sock-pwr" id="spwr-tv" style="font-size:11px;color:var(--t2);margin-top:3px;font-weight:600;">0.15 кВт</div>
+ <div class="sock-grid" style="display:flex;flex-direction:column;gap:12px;">
+    <div class="row gi" style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:var(--r3);">
+        <div style="display:flex;align-items:center;gap:10px;">
+            <span style="font-size:20px;">📺</span>
+            <span style="font-size:14px;font-weight:800;color:var(--t1);">Телевизор</span>
+        </div>
+        <button type="button" class="tog" id="sock-tog-tv" onclick="togSock('tv')" aria-label="Телевизор"></button>
     </div>
-    <div class="sock on" id="sock-ac" onclick="togSock('ac')" style="padding:16px;border-radius:var(--r2);cursor:pointer;transition:.22s;border:1px solid rgba(255,190,100,.12);background:rgba(0,0,0,.25);">
-        <div class="sock-top" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><span class="sock-icon" style="font-size:20px;">❄️</span><span class="sst on" id="sst-ac" style="font-size:11px;font-weight:800;letter-spacing:.06em;color:#ffaa44;">ON</span></div>
-        <div class="sock-name" style="font-size:14px;font-weight:800;">Кондиционер</div>
-        <div class="sock-pwr" id="spwr-ac" style="font-size:11px;color:var(--t2);margin-top:3px;font-weight:600;">1.2 кВт</div>
+    <div class="row gi" style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:var(--r3);">
+        <div style="display:flex;align-items:center;gap:10px;">
+            <span style="font-size:20px;">❄️</span>
+            <span style="font-size:14px;font-weight:800;color:var(--t1);">Кондиционер</span>
+        </div>
+        <button type="button" class="tog" id="sock-tog-ac" onclick="togSock('ac')" aria-label="Кондиционер"></button>
     </div>
 </div>
-            <div class="total-row gi" style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-radius:var(--r3);">
-                <span style="font-size:13px;font-weight:700;color:var(--t2);">Потребление</span>
-                <span style="font-size:22px;font-weight:800;" id="total-pwr2">0 кВт</span>
-            </div>
             </div>
         </div>
     </div>
@@ -251,12 +230,11 @@
     // Освещение
     let lightOn2 = false, lightAuto2 = false, lightMode2 = 'night';
     const LMODES2 = {
-        day: { desc: 'Яркость 100% · 5000K · Белый', dc: 'mode-btn day-on', nc: 'mode-btn' },
-        night: { desc: 'Яркость 10% · 2200K · Тёплый', dc: 'mode-btn', nc: 'mode-btn night-on' }
+        day: { dc: 'mode-btn day-on', nc: 'mode-btn' },
+        night: { dc: 'mode-btn', nc: 'mode-btn night-on' },
     };
     function setLightMode(mode) {
         lightMode2 = mode;
-        document.getElementById('light-mode-desc2').textContent = LMODES2[mode].desc;
         document.getElementById('mode-day2').className = LMODES2[mode].dc;
         document.getElementById('mode-night2').className = LMODES2[mode].nc;
         notify(mode === 'day' ? '☀️ Дневной свет' : '🌙 Ночной свет');
@@ -282,7 +260,7 @@
     }
 
     // Вентиляция
-    let ventAuto2 = false, ventTemp2 = 20;
+    let ventAuto2 = false;
     function togVent() {
         if (ventAuto2) return;
         const b = document.getElementById('vent-tog2');
@@ -290,11 +268,6 @@
         const on = b.classList.contains('on');
         document.getElementById('vent-state2').textContent = on ? 'Включена' : 'Выключена';
         notify(on ? '🌀 Вентиляция включена' : '🌀 Вентиляция выключена');
-    }
-    function adjTemp(d) {
-        if (ventAuto2) return;
-        ventTemp2 = Math.min(30, Math.max(16, ventTemp2 + d));
-        document.getElementById('vent-temp2').textContent = ventTemp2;
     }
     function togVentAuto() {
         ventAuto2 = !ventAuto2;
@@ -334,24 +307,10 @@
         updateBlindUI();
         notify(blindOpen ? '☀ Открыты' : '🌙 Закрыты');
     }
-    function setBlindPct(v) {
-        if (blindAuto) return;
-        blindOpen = (v > 0);
-        updateBlindUI();
-        document.getElementById('blind-pct').textContent = v + '%';
-        document.getElementById('blind-cover').style.opacity = (1 - v / 100) * 0.85;
-        if (v === 0) document.getElementById('blind-state').textContent = 'Закрыты';
-        else if (v === 100) document.getElementById('blind-state').textContent = 'Открыты';
-        else document.getElementById('blind-state').textContent = 'Частично';
-        document.getElementById('blind-tog').classList.toggle('on', v > 0);
-    }
     function updateBlindUI() {
-        const v = blindOpen ? 100 : 0;
-        document.getElementById('blind-pct').textContent = v + '%';
         document.getElementById('blind-cover').style.opacity = blindOpen ? '0' : '0.85';
         document.getElementById('blind-state').textContent = blindOpen ? 'Открыты' : 'Закрыты';
         document.getElementById('blind-tog').classList.toggle('on', blindOpen);
-        document.getElementById('blind-sl').value = v;
     }
     function togBlindAuto() {
         blindAuto = !blindAuto;
@@ -366,23 +325,13 @@
 
     // Розетки
     let sockState2 = { tv: false, ac: false };
-    let sockPwr2 = { tv: 0.15, ac: 1.2 };
     function togSock(id) {
         const sk = document.getElementById('socket-card-lock-r2');
         if (sk && sk.classList.contains('locked')) return;
         sockState2[id] = !sockState2[id];
-        const sockDiv = document.getElementById('sock-' + id);
-        if (sockDiv) sockDiv.classList.toggle('on', sockState2[id]);
-        const st = document.getElementById('sst-' + id);
-        if (st) {
-            st.className = 'sst ' + (sockState2[id] ? 'on' : 'off');
-            st.textContent = sockState2[id] ? 'ON' : 'OFF';
-        }
-        const pwrSpan = document.getElementById('spwr-' + id);
-        if (pwrSpan) pwrSpan.textContent = sockState2[id] ? sockPwr2[id] + ' кВт' : '0 кВт';
-        let total = 0;
-        for (let k in sockState2) if (sockState2[k]) total += sockPwr2[k];
-        document.getElementById('total-pwr2').textContent = total.toFixed(2) + ' кВт';
+        const tgid = id === 'tv' ? 'sock-tog-tv' : 'sock-tog-ac';
+        const btn = document.getElementById(tgid);
+        if (btn) btn.classList.toggle('on', sockState2[id]);
         notify(id === 'tv' ? (sockState2[id] ? 'Телевизор включён' : 'Телевизор выключен') : (sockState2[id] ? 'Кондиционер включён' : 'Кондиционер выключен'));
     }
 
@@ -391,12 +340,10 @@
     window.togLight = togLight;
     window.togLightAuto = togLightAuto;
     window.togVent = togVent;
-    window.adjTemp = adjTemp;
     window.togVentAuto = togVentAuto;
     window.testAlarm = testAlarm;
     window.togBlind = togBlind;
     window.setBlind = setBlind;
-    window.setBlindPct = setBlindPct;
     window.togBlindAuto = togBlindAuto;
     window.togSock = togSock;
 </script>

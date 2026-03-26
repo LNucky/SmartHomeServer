@@ -107,40 +107,18 @@ function setToggle(id, on) {
     el.classList.toggle('on', !!on);
 }
 
-function setSock(onTv, onAc, totalId) {
-    totalId = totalId || 'total-pwr';
-    [['sock-tv', 'sst-tv', 'spwr-tv', 0.15, onTv], ['sock-ac', 'sst-ac', 'spwr-ac', 1.2, onAc]].forEach(([sid, stid, pwid, pwr, on]) => {
-        const sock = document.getElementById(sid);
-        if (sock) sock.classList.toggle('on', on);
-        const st = document.getElementById(stid);
-        if (st) {
-            st.textContent = on ? 'ON' : 'OFF';
-            st.className = 'sst ' + (on ? 'on' : 'off');
-        }
-        const pw = document.getElementById(pwid);
-        if (pw) pw.textContent = on ? pwr + ' кВт' : '0 кВт';
-    });
-    const totalEl = document.getElementById(totalId);
-    if (totalEl) {
-        let t = 0;
-        if (onTv) t += 0.15;
-        if (onAc) t += 1.2;
-        totalEl.textContent = t.toFixed(2) + ' кВт';
-    }
+function setSock(onTv, onAc) {
+    setToggle('sock-tog-tv', onTv);
+    setToggle('sock-tog-ac', onAc);
 }
 
 function applyServoToBlinds(isUp) {
-    ['blind-tog', 'blind-sl', 'blind-pct', 'blind-cover', 'blind-state'].forEach(() => {});
     const tog = document.getElementById('blind-tog');
-    const pct = document.getElementById('blind-pct');
     const cover = document.getElementById('blind-cover');
     const st = document.getElementById('blind-state');
-    const sl = document.getElementById('blind-sl');
     if (tog) tog.classList.toggle('on', isUp);
-    if (pct) pct.textContent = isUp ? '100%' : '0%';
     if (cover) cover.style.opacity = isUp ? '0' : '0.85';
     if (st) st.textContent = isUp ? 'Открыты' : 'Закрыты';
-    if (sl) sl.value = isUp ? 100 : 0;
 }
 
 async function refreshDevicesFromServer() {
@@ -167,7 +145,7 @@ async function refreshDevicesFromServer() {
             if (d1 && !n1) window.setLightMode('day');
             else if (n1 && !d1) window.setLightMode('night');
         }
-        setSock(devOn(devices, 'socket_tv', 1), devOn(devices, 'socket_ac', 1), 'total-pwr');
+        setSock(devOn(devices, 'socket_tv', 1), devOn(devices, 'socket_ac', 1));
     }
     if (path.includes('room2')) {
         const v2 = devOn(devices, 'vent', 2);
@@ -184,7 +162,7 @@ async function refreshDevicesFromServer() {
             if (d2 && !n2) window.setLightMode('day');
             else if (n2 && !d2) window.setLightMode('night');
         }
-        setSock(devOn(devices, 'socket_tv', 2), devOn(devices, 'socket_ac', 2), 'total-pwr2');
+        setSock(devOn(devices, 'socket_tv', 2), devOn(devices, 'socket_ac', 2));
         applyServoToBlinds(devOn(devices, 'servo', 2));
     }
     const strip = document.getElementById('light-strip-toggle');

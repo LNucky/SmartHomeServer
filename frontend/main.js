@@ -194,7 +194,6 @@ function startSensorsSimulation() {
 // ─────────────────────────────────────────────────────────────────────────
 // Вентиляция (главная страница)
 let ventAutoMain = false;
-let ventTempMain = 22;
 function togVentMain() {
     const b = document.getElementById('vent-tog');
     if (!b) return;
@@ -204,19 +203,12 @@ function togVentMain() {
     if (stateLbl) stateLbl.textContent = on ? 'Включена' : 'Выключена';
     notify(on ? '🌀 Вентиляция включена' : '🌀 Вентиляция выключена');
 }
-function adjTempMain(d) {
-    ventTempMain = Math.min(30, Math.max(16, ventTempMain + d));
-    const tEl = document.getElementById('vent-temp');
-    if (tEl) tEl.textContent = ventTempMain;
-}
 function togVentAutoMain() {
     ventAutoMain = !ventAutoMain;
     const autoTog = document.getElementById('vent-auto-tog');
     if (autoTog) autoTog.classList.toggle('on', ventAutoMain);
     const autoLbl = document.getElementById('vent-auto-lbl');
     if (autoLbl) autoLbl.textContent = ventAutoMain ? 'Включён — авто по темп./влажн.' : 'Выключен';
-    const controls = document.getElementById('vent-controls');
-    if (controls) controls.classList.toggle('locked', ventAutoMain);
     const badge = document.getElementById('vent-auto-badge');
     if (badge) badge.classList.toggle('show', ventAutoMain);
     notify(ventAutoMain ? '🌀 Авто: управление заблокировано' : '🌀 Авто выключен');
@@ -224,7 +216,6 @@ function togVentAutoMain() {
 
 // Экспорт в глобальную область для использования в HTML-обработчиках
 window.togVentMain = togVentMain;
-window.adjTempMain = adjTempMain;
 window.togVentAutoMain = togVentAutoMain;
 
 // ─────────────────────────────────────────────────────────────────────────
@@ -234,11 +225,4 @@ document.addEventListener('DOMContentLoaded', () => {
     initMobileMenu();
     initProfileDropdown();
     startSensorsSimulation();
-    // Для главной страницы инициализация вентиляции (если есть элементы)
-    if (document.getElementById('vent-tog')) {
-        // кнопки уже привязаны через onclick, просто инициализируем переменные
-        ventTempMain = 22;
-        const tEl = document.getElementById('vent-temp');
-        if (tEl) tEl.textContent = ventTempMain;
-    }
 });
