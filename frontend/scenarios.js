@@ -94,6 +94,15 @@ function isDeviceControlLocked(lockElId) {
     return !!(el && el.classList.contains('locked'));
 }
 
+/** Блокировка управления: при глобальном авто — то же уведомление, что при вкл/выкл (notify). */
+function notifyIfControlBlocked(lockElId) {
+    if (!isDeviceControlLocked(lockElId)) return false;
+    if (autoMode && typeof window.notify === 'function') {
+        window.notify('Выключите auto-режим');
+    }
+    return true;
+}
+
 async function setDevice(deviceType, roomId, turnOn) {
     const r = await apiFetch(
         `/api/devices/${encodeURIComponent(deviceType)}?room_id=${roomId}`,
@@ -301,3 +310,4 @@ window.setRoomDayNightLights = setRoomDayNightLights;
 window.applyRoomLightsFromMode = applyRoomLightsFromMode;
 window.commitDeviceMutation = commitDeviceMutation;
 window.isDeviceControlLocked = isDeviceControlLocked;
+window.notifyIfControlBlocked = notifyIfControlBlocked;

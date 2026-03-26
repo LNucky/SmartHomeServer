@@ -184,6 +184,7 @@
         night: { dc: 'mode-btn', nc: 'mode-btn night-on' },
     };
     function setLightMode(mode, silent) {
+        if (!silent && window.notifyIfControlBlocked('light-card-lock')) return;
         lightMode = mode;
         document.getElementById('mode-day').className = LMODES[mode].dc;
         document.getElementById('mode-night').className = LMODES[mode].nc;
@@ -191,7 +192,6 @@
         if (silent) return;
         const tog = document.getElementById('light-tog');
         if (!tog || !tog.classList.contains('on')) return;
-        if (window.isDeviceControlLocked('light-card-lock')) return;
         (async () => {
             try {
                 await window.applyRoomLightsFromMode(1, mode);
@@ -204,7 +204,7 @@
         })();
     }
     async function togLight() {
-        if (window.isDeviceControlLocked('light-card-lock')) return;
+        if (window.notifyIfControlBlocked('light-card-lock')) return;
         const tog = document.getElementById('light-tog');
         if (!tog) return;
         const willOn = !tog.classList.contains('on');
@@ -225,7 +225,7 @@
 
     // Вентиляция
     async function togVent() {
-        if (window.isDeviceControlLocked('vent-card-lock')) return;
+        if (window.notifyIfControlBlocked('vent-card-lock')) return;
         const b = document.getElementById('vent-tog');
         if (!b) return;
         const willOn = !b.classList.contains('on');
@@ -242,7 +242,7 @@
 
     // Розетки (состояние = класс .on на кнопке, синхрон с сервером через refresh)
     async function togSock(id) {
-        if (window.isDeviceControlLocked('socket-card-lock-r1')) return;
+        if (window.notifyIfControlBlocked('socket-card-lock-r1')) return;
         const tgid = id === 'tv' ? 'sock-tog-tv' : 'sock-tog-ac';
         const btn = document.getElementById(tgid);
         if (!btn) return;

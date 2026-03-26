@@ -211,6 +211,7 @@
         night: { dc: 'mode-btn', nc: 'mode-btn night-on' },
     };
     function setLightMode(mode, silent) {
+        if (!silent && window.notifyIfControlBlocked('light-card-lock2')) return;
         lightMode2 = mode;
         document.getElementById('mode-day2').className = LMODES2[mode].dc;
         document.getElementById('mode-night2').className = LMODES2[mode].nc;
@@ -218,7 +219,6 @@
         if (silent) return;
         const tog = document.getElementById('light-tog2');
         if (!tog || !tog.classList.contains('on')) return;
-        if (window.isDeviceControlLocked('light-card-lock2')) return;
         (async () => {
             try {
                 await window.applyRoomLightsFromMode(2, mode);
@@ -231,7 +231,7 @@
         })();
     }
     async function togLight() {
-        if (window.isDeviceControlLocked('light-card-lock2')) return;
+        if (window.notifyIfControlBlocked('light-card-lock2')) return;
         const tog = document.getElementById('light-tog2');
         if (!tog) return;
         const willOn = !tog.classList.contains('on');
@@ -252,7 +252,7 @@
 
     // Вентиляция
     async function togVent() {
-        if (window.isDeviceControlLocked('vent-card-lock2')) return;
+        if (window.notifyIfControlBlocked('vent-card-lock2')) return;
         const b = document.getElementById('vent-tog2');
         if (!b) return;
         const willOn = !b.classList.contains('on');
@@ -283,7 +283,7 @@
     // Жалюзи
     let blindOpen = true;
     async function togBlind() {
-        if (window.isDeviceControlLocked('blind-card-lock')) return;
+        if (window.notifyIfControlBlocked('blind-card-lock')) return;
         const newOpen = !blindOpen;
         try {
             await window.setDevice('servo', 2, newOpen);
@@ -296,7 +296,7 @@
         }
     }
     async function setBlind(state) {
-        if (window.isDeviceControlLocked('blind-card-lock')) return;
+        if (window.notifyIfControlBlocked('blind-card-lock')) return;
         const open = state === 'open';
         try {
             await window.setDevice('servo', 2, open);
@@ -310,7 +310,7 @@
     }
 
     async function togSock(id) {
-        if (window.isDeviceControlLocked('socket-card-lock-r2')) return;
+        if (window.notifyIfControlBlocked('socket-card-lock-r2')) return;
         const tgid = id === 'tv' ? 'sock-tog-tv' : 'sock-tog-ac';
         const btn = document.getElementById(tgid);
         if (!btn) return;

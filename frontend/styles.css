@@ -497,10 +497,11 @@ main {
 }
 
 .lockable.locked {
-    pointer-events: none;
+    /* pointer-events не отключаем — иначе не сработает notify при клике */
     user-select: none;
     box-shadow: inset 0 0 0 1px rgba(255, 175, 60, 0.22);
     border-radius: var(--r3);
+    cursor: not-allowed;
 }
 
 /* Режимы света: выбранный — заметно, невыбранный — всё ещё читаемый и «кликабельный» по виду */

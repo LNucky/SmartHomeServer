@@ -120,7 +120,7 @@ function initProfileDropdown() {
 // ─────────────────────────────────────────────────────────────────────────
 // Вентиляция (главная страница)
 async function togVentMain() {
-    if (typeof window.isDeviceControlLocked === 'function' && window.isDeviceControlLocked('vent-main-lock')) return;
+    if (typeof window.notifyIfControlBlocked === 'function' && window.notifyIfControlBlocked('vent-main-lock')) return;
     const b = document.getElementById('vent-tog');
     if (!b) return;
     const willOn = !b.classList.contains('on');
