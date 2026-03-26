@@ -93,10 +93,9 @@
         try {
             await saveScenario(scenario);
             highlightScenarioCard(scenario);
-            alert(`Сценарий «${scenario}» сохранён на сервере. Через пару секунд откроется главная.`);
-            setTimeout(() => { window.location.href = 'index.html'; }, 1500);
+            setTimeout(() => { window.location.href = 'index.html'; }, 600);
         } catch (e) {
-            alert('Не удалось сохранить сценарий. Проверьте, что API запущен: ' + (e.message || e));
+            console.error('Сценарий не сохранён', e);
         }
     }
 
@@ -104,9 +103,8 @@
         try {
             await saveScenario('sleep', true);
             highlightScenarioCard('sleep');
-            alert('Сценарий сброшен на «Спящий», глобальное авто включено.');
         } catch (e) {
-            alert('Не удалось сбросить: ' + (e.message || e));
+            console.error('Сброс сценария', e);
         }
     }
 

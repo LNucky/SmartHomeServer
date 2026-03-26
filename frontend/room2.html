@@ -233,17 +233,18 @@
         day: { dc: 'mode-btn day-on', nc: 'mode-btn' },
         night: { dc: 'mode-btn', nc: 'mode-btn night-on' },
     };
-    function setLightMode(mode) {
+    function setLightMode(mode, silent) {
         lightMode2 = mode;
         document.getElementById('mode-day2').className = LMODES2[mode].dc;
         document.getElementById('mode-night2').className = LMODES2[mode].nc;
-        notify(mode === 'day' ? '☀️ Дневной свет' : '🌙 Ночной свет');
+        if (!silent) notify(mode === 'day' ? '☀️ Дневной свет' : '🌙 Ночной свет');
     }
     function togLight() {
         if (lightAuto2) return;
-        lightOn2 = !lightOn2;
         const tog = document.getElementById('light-tog2');
-        if (tog) tog.classList.toggle('on', lightOn2);
+        if (!tog) return;
+        tog.classList.toggle('on');
+        lightOn2 = tog.classList.contains('on');
         const state = document.getElementById('light-state2');
         if (state) state.textContent = lightOn2 ? 'Включено' : 'Выключено';
         notify(lightOn2 ? '💡 Свет включён' : '💡 Свет выключен');
@@ -323,16 +324,15 @@
         notify(blindAuto ? '🪟 Авто жалюзи включено' : '🪟 Авто выключено');
     }
 
-    // Розетки
-    let sockState2 = { tv: false, ac: false };
     function togSock(id) {
         const sk = document.getElementById('socket-card-lock-r2');
         if (sk && sk.classList.contains('locked')) return;
-        sockState2[id] = !sockState2[id];
         const tgid = id === 'tv' ? 'sock-tog-tv' : 'sock-tog-ac';
         const btn = document.getElementById(tgid);
-        if (btn) btn.classList.toggle('on', sockState2[id]);
-        notify(id === 'tv' ? (sockState2[id] ? 'Телевизор включён' : 'Телевизор выключен') : (sockState2[id] ? 'Кондиционер включён' : 'Кондиционер выключен'));
+        if (!btn) return;
+        btn.classList.toggle('on');
+        const on = btn.classList.contains('on');
+        notify(id === 'tv' ? (on ? 'Телевизор включён' : 'Телевизор выключен') : (on ? 'Кондиционер включён' : 'Кондиционер выключен'));
     }
 
     // Экспорт
@@ -346,6 +346,12 @@
     window.setBlind = setBlind;
     window.togBlindAuto = togBlindAuto;
     window.togSock = togSock;
+    window.syncRoom2Light = (on) => {
+        lightOn2 = !!on;
+    };
+    window.syncBlindFromServer = (isUp) => {
+        blindOpen = !!isUp;
+    };
 </script>
 </body>
 </html>

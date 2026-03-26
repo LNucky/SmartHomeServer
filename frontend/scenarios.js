@@ -142,9 +142,11 @@ async function refreshDevicesFromServer() {
         const ls = document.getElementById('light-state');
         if (ls) ls.textContent = anyLight ? 'Включено' : 'Выключено';
         if (typeof window.setLightMode === 'function') {
-            if (d1 && !n1) window.setLightMode('day');
-            else if (n1 && !d1) window.setLightMode('night');
+            if (d1 && !n1) window.setLightMode('day', true);
+            else if (n1 && !d1) window.setLightMode('night', true);
+            else if (d1 && n1) window.setLightMode('day', true);
         }
+        if (typeof window.syncRoom1Light === 'function') window.syncRoom1Light(anyLight);
         setSock(devOn(devices, 'socket_tv', 1), devOn(devices, 'socket_ac', 1));
     }
     if (path.includes('room2')) {
@@ -159,11 +161,15 @@ async function refreshDevicesFromServer() {
         const ls2 = document.getElementById('light-state2');
         if (ls2) ls2.textContent = anyL2 ? 'Включено' : 'Выключено';
         if (typeof window.setLightMode === 'function') {
-            if (d2 && !n2) window.setLightMode('day');
-            else if (n2 && !d2) window.setLightMode('night');
+            if (d2 && !n2) window.setLightMode('day', true);
+            else if (n2 && !d2) window.setLightMode('night', true);
+            else if (d2 && n2) window.setLightMode('day', true);
         }
+        if (typeof window.syncRoom2Light === 'function') window.syncRoom2Light(anyL2);
         setSock(devOn(devices, 'socket_tv', 2), devOn(devices, 'socket_ac', 2));
-        applyServoToBlinds(devOn(devices, 'servo', 2));
+        const servoUp = devOn(devices, 'servo', 2);
+        applyServoToBlinds(servoUp);
+        if (typeof window.syncBlindFromServer === 'function') window.syncBlindFromServer(servoUp);
     }
     const strip = document.getElementById('light-strip-toggle');
     if (strip) strip.classList.toggle('on', devOn(devices, 'rgb', 1));

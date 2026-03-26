@@ -14,15 +14,27 @@ class SensorReadingItem(BaseModel):
 
 
 class UpdateRequest(BaseModel):
-    """Запрос от ESP: batch показаний."""
-    timestamp: datetime = Field(..., description="время с ESP")
+    """Запрос от ESP: batch показаний. Время фиксируется на сервере при приёме."""
+
     readings: list[SensorReadingItem] = Field(..., description="массив показаний")
 
 
-class UpdateResponse(BaseModel):
-    """Ответ ESP: сколько принято + актуальное состояние устройств."""
+class UpdatePostResponse(BaseModel):
+    """Ответ на POST /api/update: только подтверждение приёма показаний."""
+
     received: int
-    devices: list[dict]
+
+
+class DeviceSnapshotItem(BaseModel):
+    device_type: str
+    room_id: int
+    is_on: bool
+
+
+class UpdateSnapshotResponse(BaseModel):
+    """Ответ GET /api/update: актуальное состояние устройств и сценарий (для опроса чаще, чем POST)."""
+
+    devices: list[DeviceSnapshotItem]
     scenario: str
     auto_mode: bool
 

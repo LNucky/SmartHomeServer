@@ -84,7 +84,6 @@ POST /api/update
 
 ```json
 {
-  "timestamp": "2025-03-18T12:00:00Z",
   "readings": [
     {"sensor_name": "temperature", "room_id": 1, "value": 22.5},
     {"sensor_name": "humidity", "room_id": 1, "value": 45.0},
@@ -93,7 +92,8 @@ POST /api/update
 }
 ```
 
-Ответ содержит `received` и `devices` с `device_type`, `room_id`, `is_on`.
+Ответ **POST** — только `received` (сколько показаний принято).  
+Актуальное состояние реле и сценарий — **`GET /api/update`** (без тела): `devices`, `scenario`, `auto_mode`.
 
 ### Фронт / клиент
 

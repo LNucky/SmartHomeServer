@@ -198,17 +198,18 @@
         day: { dc: 'mode-btn day-on', nc: 'mode-btn' },
         night: { dc: 'mode-btn', nc: 'mode-btn night-on' },
     };
-    function setLightMode(mode) {
+    function setLightMode(mode, silent) {
         lightMode = mode;
         document.getElementById('mode-day').className = LMODES[mode].dc;
         document.getElementById('mode-night').className = LMODES[mode].nc;
-        notify(mode === 'day' ? '☀️ Дневной свет' : '🌙 Ночной свет');
+        if (!silent) notify(mode === 'day' ? '☀️ Дневной свет' : '🌙 Ночной свет');
     }
     function togLight() {
         if (lightAuto) return;
-        lightOn = !lightOn;
         const tog = document.getElementById('light-tog');
-        if (tog) tog.classList.toggle('on', lightOn);
+        if (!tog) return;
+        tog.classList.toggle('on');
+        lightOn = tog.classList.contains('on');
         const state = document.getElementById('light-state');
         if (state) state.textContent = lightOn ? 'Включено' : 'Выключено';
         notify(lightOn ? '💡 Свет включён' : '💡 Свет выключен');
@@ -245,16 +246,16 @@
         notify(ventAuto ? '🌀 Авто: управление заблокировано' : '🌀 Авто выключен');
     }
 
-    // Розетки
-    let sockState = { tv: true, ac: true };
+    // Розетки (состояние = класс .on на кнопке, синхрон с сервером через refresh)
     function togSock(id) {
         const sk = document.getElementById('socket-card-lock-r1');
         if (sk && sk.classList.contains('locked')) return;
-        sockState[id] = !sockState[id];
         const tgid = id === 'tv' ? 'sock-tog-tv' : 'sock-tog-ac';
         const btn = document.getElementById(tgid);
-        if (btn) btn.classList.toggle('on', sockState[id]);
-        notify(id === 'tv' ? (sockState[id] ? 'Телевизор включён' : 'Телевизор выключен') : (sockState[id] ? 'Кондиционер включён' : 'Кондиционер выключен'));
+        if (!btn) return;
+        btn.classList.toggle('on');
+        const on = btn.classList.contains('on');
+        notify(id === 'tv' ? (on ? 'Телевизор включён' : 'Телевизор выключен') : (on ? 'Кондиционер включён' : 'Кондиционер выключен'));
     }
 
     // Безопасность
@@ -278,6 +279,9 @@
     window.togVentAuto = togVentAuto;
     window.togSock = togSock;
     window.testAlarm = testAlarm;
+    window.syncRoom1Light = (on) => {
+        lightOn = !!on;
+    };
 </script>
 </body>
 </html>

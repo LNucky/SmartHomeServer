@@ -12,5 +12,5 @@ class SensorReading(Base):
     sensor_name: Mapped[str] = mapped_column(String(50), nullable=False)
     room_id: Mapped[int] = mapped_column(Integer, nullable=False)
     value: Mapped[float] = mapped_column(Float, nullable=False)  # для bool: 0.0 / 1.0
-    timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)  # от ESP
+    timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)  # время приёма на сервере
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
