@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Гостиная — Умный Дом</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="bg"></div>
+<div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
+
+<!-- Оверлей спящего режима -->
+<div id="sleep-overlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000; justify-content: center; align-items: center; flex-direction: column; backdrop-filter: blur(8px);">
+    <div style="text-align: center; padding: 20px; background: rgba(0,0,0,0.7); border-radius: 30px; max-width: 90%;">
+        <div style="font-size: 48px;">😴</div>
+        <div style="font-size: 28px; font-weight: 800; margin: 16px 0;">Пожалуйста, выберите сценарий</div>
+        <div style="font-size: 16px; margin-bottom: 24px;">Система находится в режиме ожидания. Перейдите на страницу «Тестирование» для выбора сценария.</div>
+        <a href="testing.html" style="display: inline-block; background: #ff9a3c; color: #fff; padding: 12px 24px; border-radius: 40px; text-decoration: none; font-weight: 800;">🧪 Перейти к выбору сценария</a>
+    </div>
+</div>
+
+<header class="z">
+    <div class="hi">
+        <a class="logo" href="index.html">Умный<span>Домъ</span></a>
+        <nav>
+            <a class="ni" href="index.html">🏠 Главная</a>
+            <a class="ni active" href="room1.html">🛋️ Гостиная</a>
+            <a class="ni" href="room2.html">🛏️ Спальня</a>
+            <a class="ni" href="robot.html">🤖 Робот</a>
+            <a class="ni" href="testing.html">🧪 Тестирование</a>
+        </nav>
+        <div class="hright">
+            <div id="auto-control" style="display: flex; align-items: center; gap: 8px; margin-right: 12px;">
+                <span style="font-size: 12px; font-weight: 700; color: rgba(255,200,160,.8);">Авто</span>
+                <button id="global-auto-toggle" class="tog tog-sm" onclick="toggleAuto()" style="width: 40px; height: 24px;"></button>
+            </div>
+            <div class="ava" id="ava">?</div>
+            <button class="burger" id="burger-btn" aria-label="Меню"><span></span><span></span><span></span></button>
+        </div>
+    </div>
+</header>
+
+<div id="mobile-nav">
+    <a href="index.html">🏠 Главная</a>
+    <a href="room1.html" class="active">🛋️ Гостиная</a>
+    <a href="room2.html">🛏️ Спальня</a>
+    <a href="robot.html">🤖 Робот</a>
+    <a href="testing.html">🧪 Тестирование</a>
+</div>
+
+<main class="z">
+    <div class="page-hero gd" style="padding:22px 24px;border-radius:var(--r);margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;position:relative;overflow:hidden;">
+        <div class="ph-glow" style="position:absolute;width:250px;height:250px;border-radius:50%;filter:blur(70px);top:-60px;right:-40px;background:rgba(255,154,60,.25);pointer-events:none;"></div>
+        <div>
+            <div class="ph-icon" style="font-size:48px;margin-bottom:4px;">🛋️</div>
+            <div class="ph-title" style="font-size:32px;font-weight:800;letter-spacing:-1px;">Гостиная</div>
+            <div class="ph-sub" style="font-size:14px;color:var(--t3);margin-top:4px;">Основная жилая зона · Управление устройствами</div>
+        </div>
+        <div class="ph-right" style="text-align:right;">
+            <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-bottom:6px;">Время</div>
+            <div style="font-size:28px;font-weight:800;letter-spacing:-1px;" id="r1-clock">00:00</div>
+        </div>
+    </div>
+
+    <div class="divider"><div class="divline"></div><div class="divtxt">Датчики</div><div class="divline"></div></div>
+    <div class="sensors-2" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;">
+        <div class="sen gd" style="padding:20px 22px;border-radius:var(--r);position:relative;overflow:hidden;">
+            <div class="sen-glow" style="position:absolute;width:100px;height:100px;border-radius:50%;filter:blur(35px);top:-20px;right:-10px;background:rgba(255,120,20,.5);"></div>
+            <div class="sen-lbl" style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--t3);margin-bottom:8px;">Температура</div>
+            <div class="sen-val" id="r1-temp" style="font-size:38px;font-weight:800;letter-spacing:-2px;line-height:1;">23.5</div>
+            <div class="sen-unit" style="font-size:12px;color:var(--t2);margin-top:3px;margin-bottom:10px;">°C</div>
+            <div class="sen-bar" style="height:4px;background:rgba(255,255,255,.1);border-radius:100px;overflow:hidden;"><div class="sen-fill" id="r1-temp-bar" style="width:58%;height:100%;border-radius:100px;background:linear-gradient(90deg,#ffb347,#ff9a3c);"></div></div>
+        </div>
+        <div class="sen gd" style="padding:20px 22px;border-radius:var(--r);position:relative;overflow:hidden;">
+            <div class="sen-glow" style="position:absolute;width:100px;height:100px;border-radius:50%;filter:blur(35px);top:-20px;right:-10px;background:rgba(60,170,100,.45);"></div>
+            <div class="sen-lbl" style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--t3);margin-bottom:8px;">Влажность</div>
+            <div class="sen-val" id="r1-hum" style="font-size:38px;font-weight:800;letter-spacing:-2px;line-height:1;">58</div>
+            <div class="sen-unit" style="font-size:12px;color:var(--t2);margin-top:3px;margin-bottom:10px;">%</div>
+            <div class="sen-bar" style="height:4px;background:rgba(255,255,255,.1);border-radius:100px;overflow:hidden;"><div class="sen-fill" id="r1-hum-bar" style="width:58%;height:100%;border-radius:100px;background:linear-gradient(90deg,#6fcf97,#27ae60);"></div></div>
+        </div>
+    </div>
+
+    <div class="divider"><div class="divline"></div><div class="divtxt">Управление</div><div class="divline"></div></div>
+    <div class="ctrl-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:20px;">
+        <!-- ОСВЕЩЕНИЕ -->
+        <div class="ctrl-card gd" style="padding:24px;border-radius:var(--r);">
+            <div class="lockable" id="light-card-lock">
+            <div class="ctrl-head" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <div class="ctrl-icon" style="width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;background:rgba(0,0,0,.3);border:1px solid rgba(255,185,100,.15);">💡</div>
+                    <div><div class="ctrl-title" style="font-size:17px;font-weight:800;color:var(--t1);margin-bottom:2px;">Освещение</div><div class="ctrl-sub" id="light-state" style="font-size:11px;color:var(--t3);">Включено</div></div>
+                </div>
+                <button class="tog on" id="light-tog" onclick="togLight()"></button>
+            </div>
+            <div id="light-controls">
+                <div class="mode-btns" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+                    <button class="mode-btn day-on" id="mode-day" onclick="setLightMode('day')" style="width:100%;padding:13px 8px;border-radius:var(--r3);border:1px solid rgba(255,185,100,.15);background:rgba(0,0,0,.2);color:var(--t3);font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;">☀️ Дневной</button>
+                    <button class="mode-btn" id="mode-night" onclick="setLightMode('night')" style="width:100%;padding:13px 8px;border-radius:var(--r3);border:1px solid rgba(255,185,100,.15);background:rgba(0,0,0,.2);color:var(--t3);font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;">🌙 Ночной</button>
+                </div>
+                <div class="row gi" style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-radius:var(--r3);">
+                    <span style="font-size:12px;color:var(--t2);font-weight:600;" id="light-mode-desc">Яркость 100% · 5000K · Белый</span>
+                </div>
+            </div>
+            </div>
+            <div class="auto-badge" id="light-auto-badge">🔒 Авто-режим активен</div>
+            <div class="row gi" style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-radius:var(--r3);margin-top:8px;">
+                <div>
+                    <div class="row-lbl" style="font-size:13px;font-weight:700;color:var(--t2);">Авто — датчик движения</div>
+                    <div class="row-val" id="light-auto-lbl" style="font-size:11px;font-weight:600;color:var(--t3);">Выключен</div>
+                </div>
+                <button class="tog tog-sm" id="light-auto-tog" onclick="togLightAuto()"></button>
+            </div>
+        </div>
+
+        <!-- ВЕНТИЛЯЦИЯ -->
+        <div class="ctrl-card gd" style="padding:24px;border-radius:var(--r);">
+            <div class="lockable" id="vent-card-lock">
+            <div class="ctrl-head" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <div class="ctrl-icon" style="width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;background:rgba(0,0,0,.3);border:1px solid rgba(255,185,100,.15);">🌀</div>
+                    <div><div class="ctrl-title" style="font-size:17px;font-weight:800;color:var(--t1);margin-bottom:2px;">Вентиляция</div><div class="ctrl-sub" id="vent-state" style="font-size:11px;color:var(--t3);">Включена</div></div>
+                </div>
+                <button class="tog on" id="vent-tog" onclick="togVent()"></button>
+            </div>
+            <div id="vent-controls">
+                <div class="row gi" style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-radius:var(--r3);margin-bottom:8px;">
+                    <span class="row-lbl" style="font-size:13px;font-weight:700;color:var(--t2);">Режим</span>
+                    <select id="vent-mode-sel" style="background:transparent;border:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;color:var(--t1);outline:none;cursor:pointer;" onchange="notify('Режим: '+this.value)">
+                        <option>Обогрев</option><option selected>Охлаждение</option><option>Проветривание</option>
+                    </select>
+                </div>
+                <div class="row gi" style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-radius:var(--r3);margin-bottom:8px;">
+                    <span class="row-lbl" style="font-size:13px;font-weight:700;color:var(--t2);">Целевая температура</span>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <button style="width:26px;height:26px;border-radius:50%;border:1px solid rgba(255,190,100,.18);background:rgba(255,255,255,.08);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--t1);" onclick="adjTemp(-1)">−</button>
+                        <span style="font-size:18px;font-weight:800;min-width:22px;text-align:center;" id="vent-temp">22</span>°
+                        <button style="width:26px;height:26px;border-radius:50%;border:1px solid rgba(255,190,100,.18);background:rgba(255,255,255,.08);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--t1);" onclick="adjTemp(1)">+</button>
+                    </div>
+                </div>
+            </div>
+            </div>
+            <div class="auto-badge" id="vent-auto-badge">🔒 Авто-режим активен</div>
+            <div class="row gi" style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-radius:var(--r3);">
+                <div>
+                    <div class="row-lbl" style="font-size:13px;font-weight:700;color:var(--t2);">Авто — датчик темп./влажн.</div>
+                    <div class="row-val" id="vent-auto-lbl" style="font-size:11px;font-weight:600;color:var(--t3);">Выключен</div>
+                </div>
+                <button class="tog tog-sm" id="vent-auto-tog" onclick="togVentAuto()"></button>
+            </div>
+        </div>
+
+        <!-- БЕЗОПАСНОСТЬ -->
+        <div class="ctrl-card gd" id="sec-card" style="padding:24px;border-radius:var(--r);">
+            <div class="ctrl-head" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <div class="ctrl-icon" style="width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;background:rgba(180,50,20,.22);border-color:rgba(255,120,60,.18);">🔥</div>
+                    <div><div class="ctrl-title" style="font-size:17px;font-weight:800;color:var(--t1);margin-bottom:2px;">Безопасность</div><div class="ctrl-sub" style="font-size:11px;color:var(--t3);">Датчик газа</div></div>
+                </div>
+                <span class="badge badge-green" style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:100px;font-size:11px;font-weight:700;background:rgba(111,207,151,.15);color:#6fcf97;border:1px solid rgba(111,207,151,.25);">✓ Норма</span>
+            </div>
+            <div class="sec-item gi" style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-radius:var(--r3);margin-bottom:7px;"><div class="sec-left" style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:rgba(255,230,200,.85);"><span class="dot-g" style="width:8px;height:8px;border-radius:50%;background:#6fcf97;"></span>Датчик газа</div><span style="font-size:11px;font-weight:800;color:#6fcf97;">0 ppm — НОРМА</span></div>
+            <div class="sec-item gi" style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-radius:var(--r3);margin-bottom:7px;"><div class="sec-left" style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:rgba(255,230,200,.85);"><span class="dot-g" style="width:8px;height:8px;border-radius:50%;background:#6fcf97;"></span>Датчик дыма</div><span style="font-size:11px;font-weight:800;color:#6fcf97;">НОРМА</span></div>
+            <div class="sec-item gi" style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-radius:var(--r3);margin-bottom:7px;"><div class="sec-left" style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:rgba(255,230,200,.85);"><span class="dot-g" style="width:8px;height:8px;border-radius:50%;background:#6fcf97;"></span>Спринклеры</div><span style="font-size:11px;font-weight:700;color:var(--t3);">ГОТОВЫ</span></div>
+            <button class="btn-test" id="test-btn" onclick="testAlarm()" style="padding:10px;border-radius:var(--r3);border:1px solid rgba(255,110,60,.25);background:rgba(200,60,20,.15);color:#ff9060;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:800;cursor:pointer;width:100%;transition:.2s;margin-top:12px;">▶ Тест сигнализации</button>
+        </div>
+
+        <!-- РОЗЕТКИ -->
+        <div class="ctrl-card gd" style="padding:24px;border-radius:var(--r);">
+            <div class="lockable" id="socket-card-lock-r1">
+            <div class="ctrl-head" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <div class="ctrl-icon" style="width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;background:rgba(0,0,0,.3);border:1px solid rgba(255,185,100,.15);">🔌</div>
+                    <div><div class="ctrl-title" style="font-size:17px;font-weight:800;color:var(--t1);margin-bottom:2px;">Умные розетки</div><div class="ctrl-sub" style="font-size:11px;color:var(--t3);">2 устройства</div></div>
+                </div>
+                <span style="font-size:22px;">⚡</span>
+            </div>
+<div class="sock-grid">
+    <div class="sock on" id="sock-tv" onclick="togSock('tv')" style="padding:16px;border-radius:var(--r2);cursor:pointer;transition:.22s;border:1px solid rgba(255,190,100,.12);background:rgba(0,0,0,.25);">
+        <div class="sock-top" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><span class="sock-icon" style="font-size:20px;">📺</span><span class="sst on" id="sst-tv" style="font-size:11px;font-weight:800;letter-spacing:.06em;color:#ffaa44;">ON</span></div>
+        <div class="sock-name" style="font-size:14px;font-weight:800;">Телевизор</div>
+        <div class="sock-pwr" id="spwr-tv" style="font-size:11px;color:var(--t2);margin-top:3px;font-weight:600;">0.15 кВт</div>
+    </div>
+    <div class="sock on" id="sock-ac" onclick="togSock('ac')" style="padding:16px;border-radius:var(--r2);cursor:pointer;transition:.22s;border:1px solid rgba(255,190,100,.12);background:rgba(0,0,0,.25);">
+        <div class="sock-top" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><span class="sock-icon" style="font-size:20px;">❄️</span><span class="sst on" id="sst-ac" style="font-size:11px;font-weight:800;letter-spacing:.06em;color:#ffaa44;">ON</span></div>
+        <div class="sock-name" style="font-size:14px;font-weight:800;">Кондиционер</div>
+        <div class="sock-pwr" id="spwr-ac" style="font-size:11px;color:var(--t2);margin-top:3px;font-weight:600;">1.2 кВт</div>
+    </div>
+</div>
+            <div class="total-row gi" style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-radius:var(--r3);">
+                <span style="font-size:13px;font-weight:700;color:var(--t2);">Потребление</span>
+                <span style="font-size:22px;font-weight:800;" id="total-pwr">1.35 кВт</span>
+            </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div id="profile-dropdown">
+    <div class="dd-user"><div class="dd-name" id="dd-name">—</div><div class="dd-login" id="dd-login">—</div></div>
+    <div class="dd-sep"></div>
+    <button class="dd-btn" id="dd-logout">🚪 Выйти из системы</button>
+</div>
+
+<script src="main.js"></script>
+<script src="scenarios.js"></script>
+<script>
+    // Инициализация
+    document.addEventListener('DOMContentLoaded', () => {
+        initScenarios();
+    });
+
+    // Освещение
+    let lightOn = true, lightAuto = false, lightMode = 'day';
+    const LMODES = {
+        day: { desc: 'Яркость 100% · 5000K · Белый', dc: 'mode-btn day-on', nc: 'mode-btn' },
+        night: { desc: 'Яркость 10% · 2200K · Тёплый', dc: 'mode-btn', nc: 'mode-btn night-on' }
+    };
+    function setLightMode(mode) {
+        lightMode = mode;
+        document.getElementById('light-mode-desc').textContent = LMODES[mode].desc;
+        document.getElementById('mode-day').className = LMODES[mode].dc;
+        document.getElementById('mode-night').className = LMODES[mode].nc;
+        notify(mode === 'day' ? '☀️ Дневной свет' : '🌙 Ночной свет');
+    }
+    function togLight() {
+        if (lightAuto) return;
+        lightOn = !lightOn;
+        const tog = document.getElementById('light-tog');
+        if (tog) tog.classList.toggle('on', lightOn);
+        const state = document.getElementById('light-state');
+        if (state) state.textContent = lightOn ? 'Включено' : 'Выключено';
+        notify(lightOn ? '💡 Свет включён' : '💡 Свет выключен');
+    }
+    function togLightAuto() {
+        lightAuto = !lightAuto;
+        const autoTog = document.getElementById('light-auto-tog');
+        if (autoTog) autoTog.classList.toggle('on', lightAuto);
+        const lbl = document.getElementById('light-auto-lbl');
+        if (lbl) lbl.textContent = lightAuto ? 'Включён — авто по движению' : 'Выключен';
+        const badge = document.getElementById('light-auto-badge');
+        if (badge) badge.classList.toggle('show', lightAuto);
+        notify(lightAuto ? '💡 Авто: режим заблокирован' : '💡 Авто выключен');
+    }
+
+    // Вентиляция
+    let ventAuto = false, ventTemp = 22;
+    function togVent() {
+        if (ventAuto) return;
+        const b = document.getElementById('vent-tog');
+        b.classList.toggle('on');
+        const on = b.classList.contains('on');
+        document.getElementById('vent-state').textContent = on ? 'Включена' : 'Выключена';
+        notify(on ? '🌀 Вентиляция включена' : '🌀 Вентиляция выключена');
+    }
+    function adjTemp(d) {
+        if (ventAuto) return;
+        ventTemp = Math.min(30, Math.max(16, ventTemp + d));
+        document.getElementById('vent-temp').textContent = ventTemp;
+    }
+    function togVentAuto() {
+        ventAuto = !ventAuto;
+        const autoTog = document.getElementById('vent-auto-tog');
+        if (autoTog) autoTog.classList.toggle('on', ventAuto);
+        const lbl = document.getElementById('vent-auto-lbl');
+        if (lbl) lbl.textContent = ventAuto ? 'Включён — авто по темп./влажн.' : 'Выключен';
+        const badge = document.getElementById('vent-auto-badge');
+        if (badge) badge.classList.toggle('show', ventAuto);
+        notify(ventAuto ? '🌀 Авто: управление заблокировано' : '🌀 Авто выключен');
+    }
+
+    // Розетки
+    let sockState = { tv: true, ac: true };
+    let sockPwr = { tv: 0.15, ac: 1.2 };
+    function togSock(id) {
+        const sk = document.getElementById('socket-card-lock-r1');
+        if (sk && sk.classList.contains('locked')) return;
+        sockState[id] = !sockState[id];
+        const sockDiv = document.getElementById('sock-' + id);
+        if (sockDiv) sockDiv.classList.toggle('on', sockState[id]);
+        const st = document.getElementById('sst-' + id);
+        if (st) {
+            st.className = 'sst ' + (sockState[id] ? 'on' : 'off');
+            st.textContent = sockState[id] ? 'ON' : 'OFF';
+        }
+        const pwrSpan = document.getElementById('spwr-' + id);
+        if (pwrSpan) pwrSpan.textContent = sockState[id] ? sockPwr[id] + ' кВт' : '0 кВт';
+        let total = 0;
+        for (let k in sockState) if (sockState[k]) total += sockPwr[k];
+        document.getElementById('total-pwr').textContent = total.toFixed(2) + ' кВт';
+        notify(id === 'tv' ? (sockState[id] ? 'Телевизор включён' : 'Телевизор выключен') : (sockState[id] ? 'Кондиционер включён' : 'Кондиционер выключен'));
+    }
+
+    // Безопасность
+    function testAlarm() {
+        const c = document.getElementById('sec-card');
+        c.classList.add('fa');
+        document.getElementById('test-btn').textContent = '🔴 Тест активен...';
+        notify('🔴 Тест сигнализации запущен');
+        setTimeout(() => {
+            c.classList.remove('fa');
+            document.getElementById('test-btn').textContent = '▶ Тест сигнализации';
+            notify('✓ Тест завершён — всё в норме');
+        }, 3000);
+    }
+
+    // Экспорт глобальных функций
+    window.setLightMode = setLightMode;
+    window.togLight = togLight;
+    window.togLightAuto = togLightAuto;
+    window.togVent = togVent;
+    window.adjTemp = adjTemp;
+    window.togVentAuto = togVentAuto;
+    window.togSock = togSock;
+    window.testAlarm = testAlarm;
+</script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тестирование сценариев — Умный Дом</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="bg"></div>
+<div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
+
+<header class="z">
+    <div class="hi">
+        <a class="logo" href="index.html">Умный<span>Домъ</span></a>
+        <nav>
+            <a class="ni" href="index.html">🏠 Главная</a>
+            <a class="ni" href="room1.html">🛋️ Гостиная</a>
+            <a class="ni" href="room2.html">🛏️ Спальня</a>
+            <a class="ni" href="robot.html">🤖 Робот</a>
+            <a class="ni active" href="testing.html">🧪 Тестирование</a>
+        </nav>
+        <div class="hright">
+            <div class="ava" id="ava" style="display: none;">?</div>
+            <button class="burger" id="burger-btn" aria-label="Меню"><span></span><span></span><span></span></button>
+        </div>
+    </div>
+</header>
+
+<div id="mobile-nav">
+    <a href="index.html">🏠 Главная</a>
+    <a href="room1.html">🛋️ Гостиная</a>
+    <a href="room2.html">🛏️ Спальня</a>
+    <a href="robot.html">🤖 Робот</a>
+    <a href="testing.html" class="active">🧪 Тестирование</a>
+</div>
+
+<main class="z">
+    <div class="gd" style="padding:24px;text-align:center;margin-bottom:24px;">
+        <h1 style="font-size:28px;">Выбор сценария</h1>
+        <p style="color:var(--t3);margin-top:8px;">Для демонстрации функционала выберите один из сценариев</p>
+    </div>
+
+    <div class="scenario-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:24px;margin-bottom:30px;">
+        <div class="scenario-card gd" data-scenario="sunny" onclick="selectScenario('sunny')" style="padding:28px;border-radius:22px;cursor:pointer;transition:.2s;">
+            <div class="scenario-icon" style="font-size:48px;margin-bottom:16px;">☀️</div>
+            <div class="scenario-title" style="font-size:24px;font-weight:800;margin-bottom:8px;">День, солнечно</div>
+            <div class="scenario-desc" style="font-size:14px;color:var(--t3);">Яркое солнце, лента включена, жалюзи подняты, дневной свет по движению.</div>
+            <div class="scenario-note" style="font-size:12px;color:#ffb347;margin-top:12px;">Светодиодная лента имитирует солнечный свет.</div>
+        </div>
+        <div class="scenario-card gd" data-scenario="cloudy" onclick="selectScenario('cloudy')" style="padding:28px;border-radius:22px;cursor:pointer;transition:.2s;">
+            <div class="scenario-icon" style="font-size:48px;margin-bottom:16px;">☁️</div>
+            <div class="scenario-title" style="font-size:24px;font-weight:800;margin-bottom:8px;">День, пасмурно</div>
+            <div class="scenario-desc" style="font-size:14px;color:var(--t3);">Пасмурно, лента выключена, остальное как днём.</div>
+            <div class="scenario-note" style="font-size:12px;color:#ffb347;margin-top:12px;">Естественного света недостаточно.</div>
+        </div>
+        <div class="scenario-card gd" data-scenario="night" onclick="selectScenario('night')" style="padding:28px;border-radius:22px;cursor:pointer;transition:.2s;">
+            <div class="scenario-icon" style="font-size:48px;margin-bottom:16px;">🌙</div>
+            <div class="scenario-title" style="font-size:24px;font-weight:800;margin-bottom:8px;">Ночь</div>
+            <div class="scenario-desc" style="font-size:14px;color:var(--t3);">Ночной свет по движению, жалюзи опущены, лента выключена.</div>
+            <div class="scenario-note" style="font-size:12px;color:#ffb347;margin-top:12px;">Вентилятор работает по порогам.</div>
+        </div>
+        <div class="scenario-card gd" data-scenario="sleep" onclick="selectScenario('sleep')" style="padding:28px;border-radius:22px;cursor:pointer;transition:.2s;">
+            <div class="scenario-icon" style="font-size:48px;margin-bottom:16px;">😴</div>
+            <div class="scenario-title" style="font-size:24px;font-weight:800;margin-bottom:8px;">Спящий</div>
+            <div class="scenario-desc" style="font-size:14px;color:var(--t3);">Все устройства выключены, интерфейс затемнён.</div>
+            <div class="scenario-note" style="font-size:12px;color:#ffb347;margin-top:12px;">Система "спит". Выберите другой сценарий для работы.</div>
+        </div>
+    </div>
+
+    <div style="text-align:center;">
+        <button class="btn-reset" onclick="resetScenario()" style="background:rgba(255,90,50,.2);border:1px solid rgba(255,90,50,.4);padding:12px 24px;border-radius:40px;color:#ff9060;font-weight:700;cursor:pointer;">Сбросить сценарий (все выключить)</button>
+    </div>
+</main>
+
+<div id="profile-dropdown" style="display: none;">
+    <div class="dd-user"><div class="dd-name" id="dd-name">—</div><div class="dd-login" id="dd-login">—</div></div>
+    <div class="dd-sep"></div>
+    <button class="dd-btn" id="dd-logout">🚪 Выйти из системы</button>
+</div>
+
+<script src="main.js"></script>
+<script src="scenarios.js"></script>
+<script>
+    function highlightScenarioCard(scenario) {
+        document.querySelectorAll('.scenario-card').forEach((card) => {
+            card.classList.toggle('active', card.dataset.scenario === scenario);
+        });
+    }
+
+    async function selectScenario(scenario) {
+        try {
+            await saveScenario(scenario);
+            highlightScenarioCard(scenario);
+            alert(`Сценарий «${scenario}» сохранён на сервере. Через пару секунд откроется главная.`);
+            setTimeout(() => { window.location.href = 'index.html'; }, 1500);
+        } catch (e) {
+            alert('Не удалось сохранить сценарий. Проверьте, что API запущен: ' + (e.message || e));
+        }
+    }
+
+    async function resetScenario() {
+        try {
+            await saveScenario('sleep', true);
+            highlightScenarioCard('sleep');
+            alert('Сценарий сброшен на «Спящий», глобальное авто включено.');
+        } catch (e) {
+            alert('Не удалось сбросить: ' + (e.message || e));
+        }
+    }
+
+    (async function boot() {
+        await initScenarios();
+        const cur = window.smartHomeScenario || 'sleep';
+        highlightScenarioCard(cur);
+        document.getElementById('ava').style.display = 'none';
+    })();
+</script>
+</body>
+</html>

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная — Умный Дом</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<div class="bg"></div>
+<div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
+
+<!-- Оверлей спящего режима -->
+<div id="sleep-overlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000; justify-content: center; align-items: center; flex-direction: column; backdrop-filter: blur(8px);">
+    <div style="text-align: center; padding: 20px; background: rgba(0,0,0,0.7); border-radius: 30px; max-width: 90%;">
+        <div style="font-size: 48px;">😴</div>
+        <div style="font-size: 28px; font-weight: 800; margin: 16px 0;">Пожалуйста, выберите сценарий</div>
+        <div style="font-size: 16px; margin-bottom: 24px;">Система находится в режиме ожидания. Перейдите на страницу «Тестирование» для выбора сценария.</div>
+        <a href="testing.html" style="display: inline-block; background: #ff9a3c; color: #fff; padding: 12px 24px; border-radius: 40px; text-decoration: none; font-weight: 800;">🧪 Перейти к выбору сценария</a>
+    </div>
+</div>
+
+<header class="z">
+    <div class="hi">
+        <a class="logo" href="index.html">Умный<span>Домъ</span></a>
+        <nav>
+            <a class="ni active" href="index.html">🏠 Главная</a>
+            <a class="ni" href="room1.html">🛋️ Гостиная</a>
+            <a class="ni" href="room2.html">🛏️ Спальня</a>
+            <a class="ni" href="robot.html">🤖 Робот</a>
+            <a class="ni" href="testing.html">🧪 Тестирование</a>
+        </nav>
+        <div class="hright">
+            <div id="auto-control" style="display: flex; align-items: center; gap: 8px; margin-right: 12px;">
+                <span style="font-size: 12px; font-weight: 700; color: rgba(255,200,160,.8);">Авто</span>
+                <button id="global-auto-toggle" class="tog tog-sm" onclick="toggleAuto()" style="width: 40px; height: 24px;"></button>
+            </div>
+            <div class="ava" id="ava">?</div>
+            <button class="burger" id="burger-btn" aria-label="Меню"><span></span><span></span><span></span></button>
+        </div>
+    </div>
+</header>
+
+<div id="mobile-nav">
+    <a href="index.html" class="active">🏠 Главная</a>
+    <a href="room1.html">🛋️ Гостиная</a>
+    <a href="room2.html">🛏️ Спальня</a>
+    <a href="robot.html">🤖 Робот</a>
+    <a href="testing.html">🧪 Тестирование</a>
+</div>
+
+<main class="z">
+    <!-- HERO -->
+    <div class="hero gd" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;padding:24px 28px;border-radius:var(--r);margin-bottom:20px;position:relative;overflow:hidden;">
+        <div class="hero-glow" style="position:absolute;width:300px;height:300px;border-radius:50%;filter:blur(80px);top:-80px;right:-60px;background:rgba(255,154,60,.25);pointer-events:none;"></div>
+        <div>
+            <div class="hero-greet" style="font-size:13px;font-weight:600;color:var(--t3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;">Добро пожаловать,</div>
+            <div class="hero-name" style="font-size:38px;font-weight:800;letter-spacing:-1.5px;line-height:1;margin-bottom:6px;"><span id="hero-name">Гость</span>!</div>
+            <div class="hero-date" id="hero-date" style="font-size:14px;color:var(--t2);">Загрузка...</div>
+        </div>
+        <div class="hero-clock" style="text-align:right;flex-shrink:0;">
+            <div class="clock-time" id="clock" style="font-size:56px;font-weight:800;letter-spacing:-3px;line-height:1;background:linear-gradient(135deg,#ffb347,#ff7a00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap;">00:00:00</div>
+            <div class="clock-date" id="clock-date" style="font-size:13px;color:var(--t3);margin-top:6px;"></div>
+        </div>
+    </div>
+
+    <!-- SENSORS SUMMARY -->
+    <div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--t3);margin-bottom:14px;">Среднее по датчикам</div>
+    <div class="sensors-row" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px;">
+        <div class="sen-card gd" style="padding:22px 24px;border-radius:var(--r);position:relative;overflow:hidden;">
+            <div class="sen-glow" style="position:absolute;width:120px;height:120px;border-radius:50%;filter:blur(40px);top:-30px;right:-20px;background:rgba(255,120,20,.5);"></div>
+            <div class="sen-lbl" style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--t3);margin-bottom:10px;">Температура</div>
+            <div class="sen-num" id="avg-temp" style="font-size:42px;font-weight:800;line-height:1;letter-spacing:-2px;">22.6</div>
+            <div class="sen-unit" style="font-size:13px;color:var(--t2);margin-top:3px;margin-bottom:12px;">°C — комфортно</div>
+            <div class="sen-bar" style="height:4px;background:rgba(255,255,255,.1);border-radius:100px;overflow:hidden;"><div class="sen-fill" id="avg-temp-bar" style="width:55%;height:100%;border-radius:100px;background:linear-gradient(90deg,#ffb347,#ff9a3c);"></div></div>
+            <div class="sen-note" style="color:#ffb347;margin-top:8px;font-size:11px;font-weight:700;">↑ +0.3° за час</div>
+        </div>
+        <div class="sen-card gd" style="padding:22px 24px;border-radius:var(--r);position:relative;overflow:hidden;">
+            <div class="sen-glow" style="position:absolute;width:120px;height:120px;border-radius:50%;filter:blur(40px);top:-30px;right:-20px;background:rgba(60,170,100,.45);"></div>
+            <div class="sen-lbl" style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--t3);margin-bottom:10px;">Влажность</div>
+            <div class="sen-num" id="avg-hum" style="font-size:42px;font-weight:800;line-height:1;letter-spacing:-2px;">57</div>
+            <div class="sen-unit" style="font-size:13px;color:var(--t2);margin-top:3px;margin-bottom:12px;">% — в норме</div>
+            <div class="sen-bar" style="height:4px;background:rgba(255,255,255,.1);border-radius:100px;overflow:hidden;"><div class="sen-fill" id="avg-hum-bar" style="width:57%;height:100%;border-radius:100px;background:linear-gradient(90deg,#6fcf97,#27ae60);"></div></div>
+            <div class="sen-note" style="color:#6fcf97;margin-top:8px;font-size:11px;font-weight:700;">✓ Оптимально</div>
+        </div>
+        <div class="sen-card gd" style="padding:22px 24px;border-radius:var(--r);position:relative;overflow:hidden;">
+            <div class="sen-glow" style="position:absolute;width:120px;height:120px;border-radius:50%;filter:blur(40px);top:-30px;right:-20px;background:rgba(220,170,20,.45);"></div>
+            <div class="sen-lbl" style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--t3);margin-bottom:10px;">Освещённость</div>
+            <div class="sen-num" id="avg-light" style="font-size:42px;font-weight:800;line-height:1;letter-spacing:-2px;">780</div>
+            <div class="sen-unit" style="font-size:13px;color:var(--t2);margin-top:3px;margin-bottom:12px;">люкс — хорошо</div>
+            <div class="sen-bar" style="height:4px;background:rgba(255,255,255,.1);border-radius:100px;overflow:hidden;"><div class="sen-fill" style="width:62%;height:100%;border-radius:100px;background:linear-gradient(90deg,#ffe082,#ffb300);"></div></div>
+            <div class="sen-note" style="color:#ffe082;margin-top:8px;font-size:11px;font-weight:700;">☀ Дневное освещение</div>
+        </div>
+    </div>
+
+    <!-- VENTILATION STATE -->
+    <div class="gd" style="padding:24px;border-radius:var(--r);margin-bottom:24px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+            <div style="display:flex;align-items:center;gap:10px;">
+                <div style="width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;background:rgba(0,0,0,.3);border:1px solid rgba(255,185,100,.15);">🌀</div>
+                <div><div style="font-size:17px;font-weight:800;color:var(--t1);margin-bottom:2px;">Вентиляция</div><div style="font-size:11px;color:var(--t3);" id="vent-state-lbl">Включена</div></div>
+            </div>
+            <button class="tog on" id="vent-tog" onclick="togVentMain()"></button>
+        </div>
+        <div class="lockable" id="vent-controls">
+            <div class="row gi" style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-radius:var(--r3);margin-bottom:8px;">
+                <span style="font-size:13px;font-weight:700;color:var(--t2);">Режим</span>
+                <select id="vent-sel" style="background:transparent;border:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;color:var(--t1);outline:none;cursor:pointer;" onchange="notify('Режим: '+this.value)">
+                    <option>Обогрев</option><option selected>Охлаждение</option><option>Проветривание</option>
+                </select>
+            </div>
+            <div class="row gi" style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-radius:var(--r3);margin-bottom:8px;">
+                <span style="font-size:13px;font-weight:700;color:var(--t2);">Целевая температура</span>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <button style="width:26px;height:26px;border-radius:50%;border:1px solid rgba(255,190,100,.18);background:rgba(255,255,255,.08);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--t1);" onclick="adjTempMain(-1)">−</button>
+                    <span style="font-size:18px;font-weight:800;min-width:22px;text-align:center;" id="vent-temp">22</span>°
+                    <button style="width:26px;height:26px;border-radius:50%;border:1px solid rgba(255,190,100,.18);background:rgba(255,255,255,.08);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--t1);" onclick="adjTempMain(1)">+</button>
+                </div>
+            </div>
+        </div>
+        <div class="auto-badge" id="vent-auto-badge">🔒 Авто-режим активен</div>
+        <div class="row gi" style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-radius:var(--r3);">
+            <div>
+                <div style="font-size:13px;font-weight:700;color:var(--t2);">Авто — датчик темп./влажн.</div>
+                <div style="font-size:11px;font-weight:600;color:var(--t3);" id="vent-auto-lbl">Выключен</div>
+            </div>
+            <button class="tog tog-sm" id="vent-auto-tog" onclick="togVentAutoMain()"></button>
+        </div>
+    </div>
+
+    <!-- CHART -->
+    <div class="chart-card gd" style="padding:26px;border-radius:var(--r);margin-bottom:24px;">
+        <div class="chart-head" style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px;">
+            <div><div class="chart-title" style="font-size:19px;font-weight:800;">Статистика за сутки</div><div class="chart-sub" style="font-size:13px;color:var(--t3);margin-top:3px;">Температура и влажность</div></div>
+            <div class="pper" style="display:flex;gap:6px;">
+                <button class="pp active" onclick="switchPeriod(this,'day')" style="padding:7px 15px;border-radius:100px;font-size:13px;font-weight:700;cursor:pointer;border:1px solid transparent;font-family:'Plus Jakarta Sans',sans-serif;color:var(--t3);transition:.2s;background:transparent;">День</button>
+                <button class="pp" onclick="switchPeriod(this,'week')" style="padding:7px 15px;border-radius:100px;font-size:13px;font-weight:700;cursor:pointer;border:1px solid transparent;font-family:'Plus Jakarta Sans',sans-serif;color:var(--t3);transition:.2s;background:transparent;">Неделя</button>
+                <button class="pp" onclick="switchPeriod(this,'month')" style="padding:7px 15px;border-radius:100px;font-size:13px;font-weight:700;cursor:pointer;border:1px solid transparent;font-family:'Plus Jakarta Sans',sans-serif;color:var(--t3);transition:.2s;background:transparent;">Месяц</button>
+            </div>
+        </div>
+        <div class="cw" style="height:220px;"><canvas id="main-chart"></canvas></div>
+    </div>
+
+    <!-- ROOMS GRID -->
+    <div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--t3);margin-bottom:14px;">Комнаты</div>
+    <div class="rooms-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px;">
+        <a class="room-card gd" href="room1.html" style="padding:24px;border-radius:var(--r);transition:transform .2s,box-shadow .2s;cursor:pointer;text-decoration:none;display:block;color:var(--t1);">
+            <div class="room-icon" style="font-size:32px;margin-bottom:14px;">🛋️</div>
+            <div class="room-name" style="font-size:18px;font-weight:800;margin-bottom:4px;">Гостиная</div>
+            <div class="room-sub" style="font-size:12px;color:var(--t3);margin-bottom:16px;">Основная жилая зона</div>
+            <div class="room-stats" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
+                <div class="rs gi" style="padding:10px 12px;border-radius:var(--r3);"><div class="rs-lbl" style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-bottom:5px;">Температура</div><div class="rs-val" id="r1-temp" style="font-size:20px;font-weight:800;line-height:1;">23.5</div><div class="rs-unit" style="font-size:10px;color:var(--t2);">°C</div></div>
+                <div class="rs gi" style="padding:10px 12px;border-radius:var(--r3);"><div class="rs-lbl" style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-bottom:5px;">Влажность</div><div class="rs-val" id="r1-hum" style="font-size:20px;font-weight:800;line-height:1;">58</div><div class="rs-unit" style="font-size:10px;color:var(--t2);">%</div></div>
+            </div>
+            <div class="room-footer" style="display:flex;align-items:center;justify-content:space-between;">
+                <div style="display:flex;gap:6px;flex-wrap:wrap;"><span class="badge badge-green" id="r1-light-badge" style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:100px;font-size:11px;font-weight:700;background:rgba(111,207,151,.15);color:#6fcf97;border:1px solid rgba(111,207,151,.25);">💡 Свет вкл</span><span class="badge badge-green" id="r1-vent-badge" style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:100px;font-size:11px;font-weight:700;background:rgba(111,207,151,.15);color:#6fcf97;border:1px solid rgba(111,207,151,.25);">🌀 Вент вкл</span></div>
+                <span class="arrow" style="font-size:18px;color:var(--t3);">›</span>
+            </div>
+        </a>
+
+        <a class="room-card gd" href="room2.html" style="padding:24px;border-radius:var(--r);transition:transform .2s,box-shadow .2s;cursor:pointer;text-decoration:none;display:block;color:var(--t1);">
+            <div class="room-icon" style="font-size:32px;margin-bottom:14px;">🛏️</div>
+            <div class="room-name" style="font-size:18px;font-weight:800;margin-bottom:4px;">Спальня</div>
+            <div class="room-sub" style="font-size:12px;color:var(--t3);margin-bottom:16px;">Зона отдыха и сна</div>
+            <div class="room-stats" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
+                <div class="rs gi" style="padding:10px 12px;border-radius:var(--r3);"><div class="rs-lbl" style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-bottom:5px;">Температура</div><div class="rs-val" id="r2-temp" style="font-size:20px;font-weight:800;line-height:1;">21.8</div><div class="rs-unit" style="font-size:10px;color:var(--t2);">°C</div></div>
+                <div class="rs gi" style="padding:10px 12px;border-radius:var(--r3);"><div class="rs-lbl" style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-bottom:5px;">Влажность</div><div class="rs-val" id="r2-hum" style="font-size:20px;font-weight:800;line-height:1;">55</div><div class="rs-unit" style="font-size:10px;color:var(--t2);">%</div></div>
+            </div>
+            <div class="room-footer" style="display:flex;align-items:center;justify-content:space-between;">
+                <div style="display:flex;gap:6px;flex-wrap:wrap;"><span class="badge badge-orange" id="r2-light-badge" style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:100px;font-size:11px;font-weight:700;background:rgba(255,175,60,.18);color:#ffb347;border:1px solid rgba(255,175,60,.3);">💡 Свет выкл</span><span class="badge badge-green" id="r2-blind-badge" style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:100px;font-size:11px;font-weight:700;background:rgba(111,207,151,.15);color:#6fcf97;border:1px solid rgba(111,207,151,.25);">🪟 Жалюзи открыты</span></div>
+                <span class="arrow" style="font-size:18px;color:var(--t3);">›</span>
+            </div>
+        </a>
+
+        <a class="robot-card gd" href="robot.html" style="padding:24px;border-radius:var(--r);display:flex;align-items:center;justify-content:space-between;cursor:pointer;text-decoration:none;color:var(--t1);transition:transform .2s,box-shadow .2s;">
+            <div style="display:flex;align-items:center;gap:16px;">
+                <div style="font-size:42px;">🤖</div>
+                <div>
+                    <div style="font-size:18px;font-weight:800;margin-bottom:4px;">Робот-камера</div>
+                    <div style="font-size:12px;color:var(--t3);margin-bottom:10px;">RoboCam-01</div>
+                    <div style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#6fcf97;"><span class="dot-g" style="width:8px;height:8px;border-radius:50%;background:#6fcf97;flex-shrink:0;"></span>LIVE — На базе</div>
+                </div>
+            </div>
+            <span style="font-size:28px;color:var(--t3);">›</span>
+        </a>
+    </div>
+</main>
+
+<div id="profile-dropdown">
+    <div class="dd-user">
+        <div class="dd-name" id="dd-name">—</div>
+        <div class="dd-login" id="dd-login">—</div>
+    </div>
+    <div class="dd-sep"></div>
+    <button class="dd-btn" id="dd-logout">🚪 Выйти из системы</button>
+</div>
+
+<script src="main.js"></script>
+<script src="scenarios.js"></script>
+<script>
+    // Инициализация сценариев и графика
+    document.addEventListener('DOMContentLoaded', () => {
+        initScenarios();
+
+        // График
+        const ctx = document.getElementById('main-chart').getContext('2d');
+        const chartData = {
+            day: { labels: ['00','02','04','06','08','10','12','14','16','18','20','22'], temp: [21.5,21.8,22,22.3,22.5,23,23.5,24,23.8,23.5,23.2,23.5], hum: [55,54,56,57,58,59,60,58,57,58,57,58] },
+            week: { labels: ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'], temp: [22.1,22.5,23,23.4,22.8,23.2,23.5], hum: [56,57,58,59,57,56,58] },
+            month: { labels: ['1','5','10','15','20','25','30'], temp: [21,22,23.5,24,22.5,21.8,23], hum: [54,56,59,60,57,55,58] }
+        };
+        let mainChart;
+        const ga = ctx.createLinearGradient(0,0,0,200); ga.addColorStop(0,'rgba(255,154,60,.3)'); ga.addColorStop(1,'rgba(255,154,60,0)');
+        const gb = ctx.createLinearGradient(0,0,0,200); gb.addColorStop(0,'rgba(111,207,151,.24)'); gb.addColorStop(1,'rgba(111,207,151,0)');
+        mainChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: chartData.day.labels,
+                datasets: [
+                    { label: 'Температура °C', data: chartData.day.temp, borderColor: '#ff9a3c', backgroundColor: ga, fill: true, tension: 0.5, pointRadius: 4, pointBackgroundColor: '#ff9a3c', pointBorderColor: 'rgba(255,240,220,.6)', pointBorderWidth: 2, borderWidth: 2.5 },
+                    { label: 'Влажность %', data: chartData.day.hum, borderColor: '#6fcf97', backgroundColor: gb, fill: true, tension: 0.5, pointRadius: 4, pointBackgroundColor: '#6fcf97', pointBorderColor: 'rgba(255,240,220,.6)', pointBorderWidth: 2, borderWidth: 2.5, yAxisID: 'y1' }
+                ]
+            },
+            options: { responsive: true, maintainAspectRatio: false, interaction: { intersect: false, mode: 'index' }, plugins: { legend: { labels: { color: 'rgba(255,220,180,.7)', usePointStyle: true, pointStyleWidth: 12, font: { size: 13, weight: '700' } } } }, scales: { x: { grid: { color: 'rgba(255,255,255,.05)' }, ticks: { color: 'rgba(255,210,160,.55)', font: { size: 12, weight: '600' } } }, y: { grid: { color: 'rgba(255,255,255,.05)' }, ticks: { color: 'rgba(255,210,160,.55)', font: { size: 12, weight: '600' } } }, y1: { position: 'right', grid: { display: false }, ticks: { color: 'rgba(255,210,160,.55)', font: { size: 12, weight: '600' } }, min: 40, max: 80 } } }
+        });
+        window.switchPeriod = function(btn, period) {
+            document.querySelectorAll('.pp').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const d = chartData[period];
+            mainChart.data.labels = d.labels;
+            mainChart.data.datasets[0].data = d.temp;
+            mainChart.data.datasets[1].data = d.hum;
+            mainChart.update('active');
+        };
+    });
+</script>
+</body>
+</html>

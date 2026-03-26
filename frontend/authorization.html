@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Авторизация — Умный Дом</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--r:22px;--r2:16px;--r3:12px;--t1:#fff;--t2:rgba(255,225,190,.75);--t3:rgba(255,200,160,.45);--border:rgba(255,185,100,.22);--sh:0 8px 36px rgba(0,0,0,.35);}
+html{scroll-behavior:smooth;}
+body{font-family:'Plus Jakarta Sans',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;color:var(--t1);background:#1a0a02;}
+.bg{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 70% 50% at 5% 0%,#b34400,transparent 55%),radial-gradient(ellipse 55% 45% at 95% 5%,#9e3800,transparent 50%),radial-gradient(ellipse 60% 50% at 50% 105%,#6b1e00,transparent 55%),radial-gradient(ellipse 45% 38% at 78% 55%,#7d2a00,transparent 50%),#1a0a02;}
+.orb{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:1;}
+.o1{width:600px;height:600px;top:-150px;left:-100px;background:radial-gradient(circle,rgba(230,95,10,.7),transparent 70%);}
+.o2{width:500px;height:500px;bottom:-100px;right:-100px;background:radial-gradient(circle,rgba(200,70,0,.6),transparent 70%);}
+.z{position:relative;z-index:2;}
+.card{background:rgba(30,12,2,.58);backdrop-filter:blur(28px) saturate(1.4);border:1px solid var(--border);box-shadow:var(--sh),inset 0 1px 0 rgba(255,200,120,.13);border-radius:var(--r);padding:40px 36px;width:100%;max-width:420px;}
+.logo{text-align:center;margin-bottom:32px;}
+.logo-icon{font-size:48px;margin-bottom:12px;}
+.logo-txt{font-size:26px;font-weight:800;}
+.logo-txt span{background:linear-gradient(130deg,#ffb347,#ff7a00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.logo-sub{font-size:13px;color:var(--t3);margin-top:6px;}
+.tabs{display:flex;background:rgba(0,0,0,.25);border-radius:var(--r3);padding:4px;margin-bottom:24px;}
+.tab{flex:1;padding:10px;border-radius:10px;border:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:800;cursor:pointer;transition:.2s;color:var(--t3);background:transparent;}
+.tab.active{background:rgba(255,175,60,.22);color:var(--t1);}
+.field{margin-bottom:16px;}
+.field label{display:block;font-size:11px;font-weight:700;color:var(--t2);letter-spacing:.08em;text-transform:uppercase;margin-bottom:7px;}
+.inp{width:100%;padding:12px 16px;border-radius:var(--r3);border:1px solid rgba(255,185,100,.2);background:rgba(0,0,0,.3);color:var(--t1);font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:600;outline:none;transition:border-color .2s;}
+.inp:focus{border-color:rgba(255,175,60,.5);}
+.inp::placeholder{color:var(--t3);}
+.btn-primary{width:100%;padding:13px;border-radius:var(--r3);border:none;background:linear-gradient(135deg,#ff9a3c,#e67e22);color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:800;cursor:pointer;transition:.2s;box-shadow:0 4px 16px rgba(255,140,40,.4);margin-top:8px;}
+.btn-primary:hover{box-shadow:0 6px 24px rgba(255,140,40,.55);}
+.err{font-size:12px;font-weight:700;color:#ff9060;margin-top:10px;text-align:center;min-height:18px;}
+@keyframes shake{0%,100%{transform:translateX(0);}20%,60%{transform:translateX(-5px);}40%,80%{transform:translateX(5px);}}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="orb o1"></div><div class="orb o2"></div>
+
+<div class="card z">
+  <div class="logo">
+    <div class="logo-icon">🏠</div>
+    <div class="logo-txt">Умный<span>Домъ</span></div>
+    <div class="logo-sub">Система управления умным домом</div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" id="tab-login" onclick="switchTab('login')">Войти</button>
+    <button class="tab" id="tab-reg" onclick="switchTab('reg')">Регистрация</button>
+  </div>
+
+  <!-- Login -->
+  <div id="form-login">
+    <div class="field"><label>Логин</label><input class="inp" id="l-user" type="text" placeholder="Введите логин"></div>
+    <div class="field"><label>Пароль</label><input class="inp" id="l-pass" type="password" placeholder="Введите пароль" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <div class="err" id="l-err"></div>
+    <button class="btn-primary" onclick="doLogin()">Войти в систему</button>
+  </div>
+
+  <!-- Register -->
+  <div id="form-reg" style="display:none;">
+    <div class="field"><label>Имя</label><input class="inp" id="r-name" type="text" placeholder="Ваше имя"></div>
+    <div class="field"><label>Логин</label><input class="inp" id="r-user" type="text" placeholder="Придумайте логин"></div>
+    <div class="field"><label>Пароль</label><input class="inp" id="r-pass" type="password" placeholder="Придумайте пароль"></div>
+    <div class="field"><label>Повторите пароль</label><input class="inp" id="r-pass2" type="password" placeholder="Повторите пароль" onkeydown="if(event.key==='Enter')doRegister()"></div>
+    <div class="err" id="r-err"></div>
+    <button class="btn-primary" onclick="doRegister()">Создать аккаунт</button>
+  </div>
+</div>
+
+<script>
+// ── STORAGE HELPERS ──
+function getUsers(){try{return JSON.parse(localStorage.getItem('sh_users')||'[]');}catch{return[];}}
+function saveUsers(u){localStorage.setItem('sh_users',JSON.stringify(u));}
+function setSession(u){localStorage.setItem('sh_user',JSON.stringify(u));}
+function getSession(){try{return JSON.parse(localStorage.getItem('sh_user'));}catch{return null;}}
+
+// If already logged in — go home
+const _p = new URLSearchParams(location.search);
+if(_p.get('logout')==='1'){ localStorage.removeItem('sh_user'); history.replaceState(null,'',location.pathname); }
+if(getSession()) location.href='index.html';
+
+// Ensure default user exists
+(function(){
+  const u=getUsers();
+  if(!u.find(x=>x.username==='admin')) {u.push({name:'Администратор',username:'admin',password:'1234'});saveUsers(u);}
+})();
+
+function switchTab(t){
+  const isL=t==='login';
+  document.getElementById('form-login').style.display=isL?'':'none';
+  document.getElementById('form-reg').style.display=isL?'none':'';
+  document.getElementById('tab-login').classList.toggle('active',isL);
+  document.getElementById('tab-reg').classList.toggle('active',!isL);
+}
+
+function shake(id){
+  const el=document.getElementById(id);
+  el.style.borderColor='rgba(255,100,60,.7)';
+  el.style.animation='shake .4s ease';
+  el.focus();
+  setTimeout(()=>{el.style.borderColor='';el.style.animation='';},800);
+}
+
+function doLogin(){
+  const u=document.getElementById('l-user').value.trim();
+  const p=document.getElementById('l-pass').value;
+  document.getElementById('l-err').textContent='';
+  if(!u){shake('l-user');return;}
+  if(!p){shake('l-pass');return;}
+  const found=getUsers().find(x=>x.username===u&&x.password===p);
+  if(!found){shake('l-user');shake('l-pass');document.getElementById('l-err').textContent='Неверный логин или пароль';return;}
+  setSession(found);
+  location.href='index.html';
+}
+
+function doRegister(){
+  const name=document.getElementById('r-name').value.trim();
+  const u=document.getElementById('r-user').value.trim();
+  const p=document.getElementById('r-pass').value;
+  const p2=document.getElementById('r-pass2').value;
+  document.getElementById('r-err').textContent='';
+  if(!name){shake('r-name');return;}
+  if(!u){shake('r-user');return;}
+  if(!p){shake('r-pass');return;}
+  if(p!==p2){shake('r-pass2');document.getElementById('r-err').textContent='Пароли не совпадают';return;}
+  const users=getUsers();
+  if(users.find(x=>x.username===u)){shake('r-user');document.getElementById('r-err').textContent='Логин уже занят';return;}
+  const newUser={name,username:u,password:p};
+  users.push(newUser);saveUsers(users);setSession(newUser);
+  location.href='testing.html';
+}
+</script>
+</body>
+</html>
