@@ -10,6 +10,14 @@ from services.scenario_engine import SCENARIOS, compute_device_states
 router = APIRouter(prefix="/scenario", tags=["scenario"])
 
 
+async def apply_rgb_from_scenario(db) -> None:
+    """RGB (комн. 1): только при сценарии sunny; не управляется через POST /devices/rgb."""
+    h_repo = HomeStateRepository(db)
+    d_repo = DeviceRepository(db)
+    home = await h_repo.get()
+    await d_repo.set_state("rgb", 1, home.scenario == "sunny")
+
+
 async def recompute_devices_if_auto(db) -> None:
     h_repo = HomeStateRepository(db)
     s_repo = SensorRepository(db)
@@ -39,6 +47,7 @@ async def put_scenario(body: ScenarioUpdateRequest, db: DbSession):
         if body.scenario not in SCENARIOS:
             raise HTTPException(400, f"scenario ∈ {sorted(SCENARIOS)}")
     h = await h_repo.update(scenario=body.scenario, auto_mode=body.auto_mode)
+    await apply_rgb_from_scenario(db)
     await recompute_devices_if_auto(db)
     await db.commit()
     h = await h_repo.get()

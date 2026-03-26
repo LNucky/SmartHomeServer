@@ -74,7 +74,7 @@ cp .env.example .env   # при необходимости поправь DATABA
 ### Устройства
 
 По комнатам 1 и 2: `night_light`, `day_light`, `vent`, `socket_tv`, `socket_ac`.  
-**servo** — только комната **2**. **rgb** — только комната **1**.
+**servo** — только комната **2**. **rgb** — только комната **1**, включается только при сценарии **sunny** (ручного API/фронта нет).
 
 ### ESP32 → сервер
 
@@ -86,8 +86,7 @@ POST /api/update
 {
   "readings": [
     {"sensor_name": "temperature", "room_id": 1, "value": 22.5},
-    {"sensor_name": "humidity", "room_id": 1, "value": 45.0},
-    {"sensor_name": "night_light", "room_id": 1, "value": 1.0}
+    {"sensor_name": "humidity", "room_id": 1, "value": 45.0}
   ]
 }
 ```
@@ -104,4 +103,4 @@ POST /api/update
 | GET | /api/devices |
 | GET/POST | /api/devices/{type}?room_id=… |
 
-**Инструкция для ESP по сети:** [docs/ESP_SETUP_FOR_FRIEND.md](docs/ESP_SETUP_FOR_FRIEND.md) — для запросов к API удобно хост: **8000** или тот же хост с **8080** и путём `/api/...`.
+**Инструкция для ESP:** [docs/ESP_SETUP_FOR_FRIEND.md](docs/ESP_SETUP_FOR_FRIEND.md) — публичный доступ через **HTTPS** (`https://gorgeously-in-admiral.cloudpub.ru`, Cloudpub). Локально для отладки: **localhost:8000** или фронт на **8080** с прокси `/api/`.

@@ -33,6 +33,11 @@ def _device_router(device_type: str, allowed_rooms: tuple[int, ...]):
         db: DbSession,
         room_id: int = Query(..., ge=1, le=2),
     ):
+        if device_type == "rgb":
+            raise HTTPException(
+                status_code=403,
+                detail="RGB задаётся только сценарием «День, солнечно» (sunny); ручное управление отключено",
+            )
         _check_room(room_id)
         repo = DeviceRepository(db)
         device = await repo.set_state(device_type, room_id, data.turn_on)

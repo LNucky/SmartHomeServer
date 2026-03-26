@@ -206,9 +206,6 @@ async function refreshDevicesFromServer() {
         applyServoToBlinds(servoUp);
         if (typeof window.syncBlindFromServer === 'function') window.syncBlindFromServer(servoUp);
     }
-    const strip = document.getElementById('light-strip-toggle');
-    if (strip) strip.classList.toggle('on', devOn(devices, 'rgb', 1));
-
     if (!autoMode) manualDeviceHydrated = true;
 }
 
