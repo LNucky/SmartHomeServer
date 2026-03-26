@@ -14,6 +14,9 @@ async def lifespan(app: FastAPI):
     alembic_cfg = Config("alembic.ini")
     loop = asyncio.get_event_loop()
     await loop.run_in_executor(None, lambda: command.upgrade(alembic_cfg, "head"))
+    from db.seed_readings import seed_sensor_readings_if_empty
+
+    await seed_sensor_readings_if_empty()
     yield
 
 

@@ -118,80 +118,6 @@ function initProfileDropdown() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────
-// Симуляция датчиков (для главной и комнат)
-function updateSensorsMain() {
-    const t1 = (22 + Math.random() * 3).toFixed(1);
-    const t2 = (20 + Math.random() * 3).toFixed(1);
-    const h1 = Math.round(55 + Math.random() * 10);
-    const h2 = Math.round(52 + Math.random() * 10);
-    const l = Math.round(650 + Math.random() * 300);
-    const avgT = ((parseFloat(t1) + parseFloat(t2)) / 2).toFixed(1);
-    const avgH = Math.round((h1 + h2) / 2);
-    const avgTempEl = document.getElementById('avg-temp');
-    const avgHumEl = document.getElementById('avg-hum');
-    const avgLightEl = document.getElementById('avg-light');
-    if (avgTempEl) avgTempEl.textContent = avgT;
-    if (avgHumEl) avgHumEl.textContent = avgH;
-    if (avgLightEl) avgLightEl.textContent = l;
-    const tempBar = document.getElementById('avg-temp-bar');
-    if (tempBar) tempBar.style.width = Math.min(100, (avgT / 40 * 100)) + '%';
-    const humBar = document.getElementById('avg-hum-bar');
-    if (humBar) humBar.style.width = avgH + '%';
-    const r1temp = document.getElementById('r1-temp');
-    const r1hum = document.getElementById('r1-hum');
-    const r2temp = document.getElementById('r2-temp');
-    const r2hum = document.getElementById('r2-hum');
-    if (r1temp) r1temp.textContent = t1;
-    if (r1hum) r1hum.textContent = h1;
-    if (r2temp) r2temp.textContent = t2;
-    if (r2hum) r2hum.textContent = h2;
-}
-
-// Для комнат
-function updateRoomSensors(room) {
-    if (room === 1) {
-        const t = (22 + Math.random() * 3).toFixed(1);
-        const h = Math.round(54 + Math.random() * 10);
-        const tempEl = document.getElementById('r1-temp');
-        const humEl = document.getElementById('r1-hum');
-        if (tempEl) tempEl.textContent = t;
-        if (humEl) humEl.textContent = h;
-        const tempBar = document.getElementById('r1-temp-bar');
-        if (tempBar) tempBar.style.width = Math.min(100, (t / 40 * 100)) + '%';
-        const humBar = document.getElementById('r1-hum-bar');
-        if (humBar) humBar.style.width = h + '%';
-    } else if (room === 2) {
-        const t = (20 + Math.random() * 3).toFixed(1);
-        const h = Math.round(50 + Math.random() * 10);
-        const tempEl = document.getElementById('r2-temp');
-        const humEl = document.getElementById('r2-hum');
-        if (tempEl) tempEl.textContent = t;
-        if (humEl) humEl.textContent = h;
-        const tempBar = document.getElementById('r2-temp-bar');
-        if (tempBar) tempBar.style.width = Math.min(100, (t / 40 * 100)) + '%';
-        const humBar = document.getElementById('r2-hum-bar');
-        if (humBar) humBar.style.width = h + '%';
-    }
-}
-
-// Запуск симуляции датчиков в зависимости от страницы
-function startSensorsSimulation() {
-    const isMain = !!document.getElementById('avg-temp');
-    const isRoom1 = !!document.getElementById('r1-temp') && !document.getElementById('avg-temp');
-    const isRoom2 = !!document.getElementById('r2-temp') && !document.getElementById('avg-temp');
-    if (isMain) {
-        setInterval(updateSensorsMain, 5000);
-        updateSensorsMain();
-    } else if (isRoom1) {
-        setInterval(() => updateRoomSensors(1), 5000);
-        updateRoomSensors(1);
-    } else if (isRoom2) {
-        setInterval(() => updateRoomSensors(2), 5000);
-        updateRoomSensors(2);
-    }
-}
-
-// ─────────────────────────────────────────────────────────────────────────
 // Вентиляция (главная страница)
 let ventAutoMain = false;
 function togVentMain() {
@@ -224,5 +150,4 @@ document.addEventListener('DOMContentLoaded', () => {
     initAuth();
     initMobileMenu();
     initProfileDropdown();
-    startSensorsSimulation();
 });
