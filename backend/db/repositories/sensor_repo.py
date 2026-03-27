@@ -1,5 +1,6 @@
 from datetime import datetime
-from sqlalchemy import select, desc
+
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.models.sensor import SensorReading
@@ -38,7 +39,7 @@ class SensorRepository:
             q = q.where(SensorReading.sensor_name == sensor_name)
         if room_id is not None:
             q = q.where(SensorReading.room_id == room_id)
-        q = q.order_by(desc(SensorReading.timestamp))
+        q = q.order_by(SensorReading.timestamp.desc())
         result = await self.db.execute(q.limit(100))
         return list(result.scalars().all())
 
@@ -53,47 +54,60 @@ class SensorRepository:
                 SensorReading.sensor_name == sensor_name,
                 SensorReading.room_id == room_id,
             )
-            .order_by(desc(SensorReading.timestamp))
+            .order_by(SensorReading.timestamp.desc())
             .limit(1)
         )
         return result.scalar_one_or_none()
 
     async def get_latest_all_sensors(self, room_id: int | None = None) -> list[dict]:
-        """Последнее значение каждого датчика (sensor_name, room_id)."""
-        q = select(SensorReading)
-        if room_id is not None:
-            q = q.where(SensorReading.room_id == room_id)
-        # Берём последнее по timestamp для каждой пары (sensor_name, room_id)
-        # через подзапрос - проще итерацией
-        result = await self.db.execute(
-            q.order_by(desc(SensorReading.timestamp)).limit(50)
+        """Последнее значение для каждой пары (sensor_name, room_id)."""
+        subq_sel = (
+            select(
+                SensorReading.sensor_name,
+                SensorReading.room_id,
+                func.max(SensorReading.timestamp).label("max_ts"),
+            )
+            .group_by(SensorReading.sensor_name, SensorReading.room_id)
         )
+        if room_id is not None:
+            subq_sel = subq_sel.where(SensorReading.room_id == room_id)
+        subq = subq_sel.subquery()
+
+        q = select(SensorReading).join(
+            subq,
+            (SensorReading.sensor_name == subq.c.sensor_name)
+            & (SensorReading.room_id == subq.c.room_id)
+            & (SensorReading.timestamp == subq.c.max_ts),
+        )
+        result = await self.db.execute(q)
         readings = list(result.scalars().all())
-        seen: set[tuple[str, int]] = set()
-        out: list[dict] = []
-        for r in readings:
-            key = (r.sensor_name, r.room_id)
-            if key not in seen:
-                seen.add(key)
-                out.append({
-                    "sensor_name": r.sensor_name,
-                    "room_id": r.room_id,
-                    "value": r.value,
-                    "timestamp": r.timestamp.isoformat() if r.timestamp else None,
-                })
-        return out
+        return [
+            {
+                "sensor_name": r.sensor_name,
+                "room_id": r.room_id,
+                "value": r.value,
+                "timestamp": r.timestamp.isoformat() if r.timestamp else None,
+            }
+            for r in readings
+        ]
 
     async def get_snapshot_dict(self) -> dict[tuple[str, int], float]:
         """Последнее значение для каждой пары (sensor_name, room_id)."""
-        result = await self.db.execute(
-            select(SensorReading).order_by(desc(SensorReading.timestamp)).limit(200)
+        subq = (
+            select(
+                SensorReading.sensor_name,
+                SensorReading.room_id,
+                func.max(SensorReading.timestamp).label("max_ts"),
+            )
+            .group_by(SensorReading.sensor_name, SensorReading.room_id)
+        ).subquery()
+
+        q = select(SensorReading).join(
+            subq,
+            (SensorReading.sensor_name == subq.c.sensor_name)
+            & (SensorReading.room_id == subq.c.room_id)
+            & (SensorReading.timestamp == subq.c.max_ts),
         )
+        result = await self.db.execute(q)
         readings = list(result.scalars().all())
-        seen: set[tuple[str, int]] = set()
-        out: dict[tuple[str, int], float] = {}
-        for r in readings:
-            key = (r.sensor_name, r.room_id)
-            if key not in seen:
-                seen.add(key)
-                out[key] = r.value
-        return out
+        return {(r.sensor_name, r.room_id): r.value for r in readings}
